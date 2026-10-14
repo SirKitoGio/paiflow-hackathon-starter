@@ -1,0 +1,23 @@
+{
+  "id": "tranche-demo",
+  "name": "Tranche Barkada",
+  "contributionStroops": "10000000",
+  "members": [
+    { "id": "m1", "slot": 1, "displayName": "Member 1", "publicKey": null },
+    { "id": "m2", "slot": 2, "displayName": "Member 2", "publicKey": null },
+    { "id": "m3", "slot": 3, "displayName": "Member 3", "publicKey": null },
+    { "id": "m4", "slot": 4, "displayName": "Member 4", "publicKey": null },
+    { "id": "m5", "slot": 5, "displayName": "Member 5", "publicKey": null }
+  ],
+  "destinations": [
+    { "slot": 1, "label": "Rent", "publicKey": null, "percentBps": 4500 },
+    { "slot": 1, "label": "Wallet", "publicKey": null, "percentBps": 3200 }
+  ],
+  "rounds": [
+    { "index": 1, "receiverMemberId": "m1", "splitBps": { "now": 7700, "vault": 2000, "fund": 300 }, "deadline": "2026-10-14T07:30:00Z" },
+    { "index": 2, "receiverMemberId": "m2", "splitBps": { "now": 8200, "vault": 1500, "fund": 300 }, "deadline": "2026-10-21T07:30:00Z" },
+    { "index": 3, "receiverMemberId": "m3", "splitBps": { "now": 8700, "vault": 1000, "fund": 300 }, "deadline": "2026-10-28T07:30:00Z" },
+    { "index": 4, "receiverMemberId": "m4", "splitBps": { "now": 9200, "vault": 500, "fund": 300 }, "deadline": "2026-11-04T07:30:00Z" },
+    { "index": 5, "receiverMemberId": "m5", "splitBps": { "now": 9700, "vault": 0, "fund": 300 }, "deadline": "2026-11-11T07:30:00Z" }
+  ]
+}

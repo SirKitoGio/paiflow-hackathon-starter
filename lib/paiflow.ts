@@ -70,9 +70,40 @@ function origin() {
     return configurationError("Set PAIFLOW_BASE_URL to a platform origin.");
   }
 }
-function teamConfig(): Config {
-  const token = process.env.PAIFLOW_API_TOKEN?.trim();
-  const deploymentId = process.env.PAIFLOW_DEPLOYMENT_ID?.trim();
+// Round 1 uses PAIFLOW_DEPLOYMENT_ID/PAIFLOW_API_TOKEN; later rounds come from
+// server-only TRANCHE_ROUNDS_JSON: [{"round":2,"deploymentId":"…","token":"pfk_…"}].
+function roundCredentials(round: number) {
+  if (round === 1)
+    return {
+      token: process.env.PAIFLOW_API_TOKEN?.trim(),
+      deploymentId: process.env.PAIFLOW_DEPLOYMENT_ID?.trim(),
+    };
+  if (!Number.isSafeInteger(round) || round < 1)
+    return configurationError("Unknown Tranche round.");
+  let rounds: unknown;
+  try {
+    rounds = JSON.parse(process.env.TRANCHE_ROUNDS_JSON || "[]");
+  } catch {
+    return configurationError("Set TRANCHE_ROUNDS_JSON to a JSON array.");
+  }
+  if (!Array.isArray(rounds))
+    return configurationError("Set TRANCHE_ROUNDS_JSON to a JSON array.");
+  const entry = rounds.find(
+    (r): r is { deploymentId?: unknown; token?: unknown } =>
+      !!r && typeof r === "object" && (r as { round?: unknown }).round === round,
+  );
+  if (!entry)
+    return configurationError(`Round ${round} has no deployment configured.`);
+  return {
+    token: typeof entry.token === "string" ? entry.token.trim() : undefined,
+    deploymentId:
+      typeof entry.deploymentId === "string"
+        ? entry.deploymentId.trim()
+        : undefined,
+  };
+}
+function teamConfig(round = 1): Config {
+  const { token, deploymentId } = roundCredentials(round);
   if (!token || !deploymentId)
     return configurationError(
       "Team mode requires PAIFLOW_API_TOKEN and PAIFLOW_DEPLOYMENT_ID.",
@@ -155,8 +186,8 @@ export function publicConfig(): PublicConfig {
     throw error;
   }
 }
-async function config(): Promise<Config> {
-  if (requireIntegration() === "team") return teamConfig();
+async function config(round?: number): Promise<Config> {
+  if (requireIntegration() === "team") return teamConfig(round);
   const platformOrigin = origin();
   const cache = demoCaches.get(platformOrigin) ?? {};
   demoCaches.set(platformOrigin, cache);
@@ -189,8 +220,9 @@ async function call<T>(
   query?: URLSearchParams,
   publicPath?: string,
   extraHeaders?: Record<string, string>,
+  round?: number,
 ): Promise<T> {
-  const { origin, deploymentId, token } = await config();
+  const { origin, deploymentId, token } = await config(round);
   const url = new URL(
     publicPath
       ? `api/deployments/${deploymentId}/${publicPath}`
@@ -281,11 +313,22 @@ export function executeHash(xdr: string): string {
     );
   }
 }
-export const prepareExecute = async (input: {
-  from: string;
-  amount: string;
-}) => {
-  const prepared = await call<Prepared>("execute", "POST", input);
+export const prepareExecute = async (
+  input: {
+    from: string;
+    amount: string;
+  },
+  round?: number,
+) => {
+  const prepared = await call<Prepared>(
+    "execute",
+    "POST",
+    input,
+    undefined,
+    undefined,
+    undefined,
+    round,
+  );
   if (
     prepared.network !== "testnet" ||
     prepared.networkPassphrase !== Networks.TESTNET
@@ -299,10 +342,10 @@ export const prepareExecute = async (input: {
   return { ...prepared, txHash: executeHash(prepared.xdr) };
 };
 /** Recover old records from their original envelope, never from a replacement. */
-export async function reconcileExecute(xdr: string) {
+export async function reconcileExecute(xdr: string, round?: number) {
   const txHash = executeHash(xdr);
   try {
-    return { ...(await transactionStatus(txHash)), txHash };
+    return { ...(await transactionStatus(txHash, round)), txHash };
   } catch (error) {
     // Absent deployment association / RPC history is uncertainty, not expiry proof.
     if (
@@ -318,6 +361,7 @@ export const submitExecute = (
   input: { signedXdr: string },
   wait = true,
   preparationRequestId?: string,
+  round?: number,
 ) =>
   call<Submitted>(
     "execute/submit",
@@ -328,6 +372,7 @@ export const submitExecute = (
     preparationRequestId
       ? { "x-preparation-request-id": preparationRequestId }
       : undefined,
+    round,
   );
 
 export type EventItem = {
@@ -347,12 +392,21 @@ export type EventPage = {
 };
 export function listEvents(
   input: { cursor?: string; limit?: number; txHash?: string } = {},
+  round?: number,
 ) {
   const query = new URLSearchParams();
   if (input.cursor) query.set("cursor", input.cursor);
   if (input.limit !== undefined) query.set("limit", String(input.limit));
   if (input.txHash) query.set("txHash", input.txHash);
-  return call<EventPage>("events", "GET", undefined, query);
+  return call<EventPage>(
+    "events",
+    "GET",
+    undefined,
+    query,
+    undefined,
+    undefined,
+    round,
+  );
 }
 
 // One page at a time in your server polling handler:
@@ -442,11 +496,27 @@ import type {
   DeploymentBalances,
   SwapQuote,
 } from "@/lib/api-types";
-export const capabilities = () =>
-  call<DeploymentCapabilities>("capabilities", "GET");
+export const capabilities = (round?: number) =>
+  call<DeploymentCapabilities>(
+    "capabilities",
+    "GET",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    round,
+  );
 export const balances = () => call<DeploymentBalances>("balances", "GET");
-export const transactionStatus = (txHash: string) =>
-  call<TransactionStatus>(`transactions/${encodeURIComponent(txHash)}`, "GET");
+export const transactionStatus = (txHash: string, round?: number) =>
+  call<TransactionStatus>(
+    `transactions/${encodeURIComponent(txHash)}`,
+    "GET",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    round,
+  );
 export const swapQuote = (input: { amount: string; nodeId?: string }) =>
   call<SwapQuote>(
     "swap-quote",
