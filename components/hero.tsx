@@ -81,7 +81,7 @@ export function Hero() {
           <p className="lp-kicker">
             Secure the split,
             <br />
-            increate the value.
+            increase the value.
           </p>
           <h1 className="lp-title">
             <span className="lp-t1">Reimagined for</span>

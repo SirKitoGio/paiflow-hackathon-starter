@@ -28,6 +28,12 @@ export type PaluwaganItem = {
   createdAt?: string;
 };
 
+// Display name for the signed-in account: its username, else the name part of its email.
+function displayName(user: { username?: string; email?: string } | null): string {
+  const raw = user?.username?.trim() || user?.email?.split("@")[0]?.split(/[._\d-]/)[0] || "";
+  return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : "";
+}
+
 function formatCardDate(iso: string): string {
   if (!iso) return "";
   const parts = iso.split("-");
@@ -59,6 +65,23 @@ export function Dashboard() {
   const [paluwagans, setPaluwagans] = useState<PaluwaganItem[]>([]);
   const [selectedPaluwagan, setSelectedPaluwagan] = useState<PaluwaganItem | null>(null);
   const router = useRouter();
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    browserRequest<{ username: string; email: string }>("/api/auth/me").then(
+      (user) => setUserName(displayName(user)),
+      () => router.replace("/login"),
+    );
+  }, [router]);
+
+  async function logOut() {
+    try {
+      await browserRequest("/api/auth/logout", {});
+    } finally {
+      router.replace("/login");
+      router.refresh();
+    }
+  }
   const [group, setGroup] = useState<GroupSummary | null>(null);
 
   useEffect(() => {
@@ -216,7 +239,7 @@ export function Dashboard() {
         <header className="db-card-header">
           {/* Left Greeting */}
           <div className="db-greeting">
-            <h1 className="db-greeting-title">Good day, Julianna! 👋</h1>
+            <h1 className="db-greeting-title">{userName ? `Good day, ${userName}! 👋` : "Good day! 👋"}</h1>
             <p className="db-greeting-sub">Here&apos;s an overview of your savings journey.</p>
           </div>
 
@@ -245,9 +268,12 @@ export function Dashboard() {
             </button>
 
             {/* User Avatar */}
-            <div className="db-avatar" title="Julianna">
-              <span>J</span>
+            <div className="db-avatar" title={userName}>
+              <span>{userName.charAt(0)}</span>
             </div>
+            <button type="button" className="db-logout" onClick={() => void logOut()}>
+              Log out
+            </button>
 
             {/* + Create Paluwagan Magenta Button */}
             <button

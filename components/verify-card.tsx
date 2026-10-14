@@ -82,12 +82,6 @@ export function VerifyCard() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const existing = localStorage.getItem("tranche_user");
-      if (!existing) {
-        localStorage.setItem("tranche_user", JSON.stringify({ email: "verified.user@tranche.finance" }));
-      }
-    } catch {}
     router.push("/dashboard");
   };
 

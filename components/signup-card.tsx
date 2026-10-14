@@ -3,11 +3,38 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { browserRequest } from "@/lib/browser-api";
+import { authErrorText } from "@/lib/auth/client";
 import "./signup.css";
 
 export function SignupCard() {
   const router = useRouter();
   const [agreed, setAgreed] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function signUp(form: HTMLFormElement) {
+    const data = new FormData(form);
+    setError(null);
+    if (data.get("password") !== data.get("confirmPassword")) {
+      setError("Passwords don't match.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await browserRequest("/api/auth/signup", {
+        username: data.get("username"),
+        email: data.get("email"),
+        password: data.get("password"),
+        phone: data.get("phone") || undefined,
+      });
+      router.replace("/verify");
+      router.refresh();
+    } catch (err) {
+      setError(authErrorText(err));
+      setBusy(false);
+    }
+  }
 
   return (
     <main
@@ -98,13 +125,7 @@ export function SignupCard() {
           className="su-form"
           onSubmit={(e) => {
             e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const username = (formData.get("username") as string) || "Organizer";
-            const email = (formData.get("email") as string) || "user@tranche.finance";
-            try {
-              localStorage.setItem("tranche_user", JSON.stringify({ username, email }));
-            } catch {}
-            router.push("/verify");
+            void signUp(e.currentTarget);
           }}
         >
           {/* Form Fields */}
@@ -188,14 +209,15 @@ export function SignupCard() {
 
           {/* Action Block */}
           <div className="su-action">
-            <button type="submit" className="su-signup-btn">
-              Sign Up
+            {error && <p className="su-error" role="alert">{error}</p>}
+            <button type="submit" className="su-signup-btn" disabled={busy}>
+              {busy ? "Creating account…" : "Sign Up"}
             </button>
             <p className="su-or">or sign up with</p>
             <button
               type="button"
               className="su-social"
-              onClick={() => router.push("/verify")}
+              onClick={() => setError("Google sign-up isn't available yet. Sign up with your email.")}
             >
               <div className="su-google-frame" aria-hidden="true">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">

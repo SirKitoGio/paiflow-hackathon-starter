@@ -384,3 +384,12 @@
     width: 100%;
   }
 }
+
+.su-error {
+  margin: 0 0 4px;
+  font-size: 12px;
+  line-height: 16px;
+  color: #c43d4b;
+  text-align: center;
+}
+.su-signup-btn:disabled { opacity: 0.6; cursor: wait; }

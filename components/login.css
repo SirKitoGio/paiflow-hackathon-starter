@@ -167,3 +167,11 @@
     font-size: 40px;
   }
 }
+
+.lg-error {
+  margin: -4px 8px 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: #c43d4b;
+}
+.lg-login:disabled { opacity: 0.6; cursor: wait; }

@@ -1,10 +1,30 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { browserRequest } from "@/lib/browser-api";
+import { authErrorText } from "@/lib/auth/client";
 import "./login.css";
 
 export function LoginCard() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function logIn(form: HTMLFormElement) {
+    const data = new FormData(form);
+    setError(null);
+    setBusy(true);
+    try {
+      await browserRequest("/api/auth/login", { email: data.get("email"), password: data.get("password") });
+      const next = new URLSearchParams(window.location.search).get("next");
+      router.replace(next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
+      router.refresh();
+    } catch (err) {
+      setError(authErrorText(err));
+      setBusy(false);
+    }
+  }
   return (
     <main
       className="lg"
@@ -43,12 +63,7 @@ export function LoginCard() {
           className="lg-form"
           onSubmit={(e) => {
             e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const email = (formData.get("email") as string) || "demo@tranche.finance";
-            try {
-              localStorage.setItem("tranche_user", JSON.stringify({ email }));
-            } catch {}
-            router.push("/dashboard");
+            void logIn(e.currentTarget);
           }}
         >
           <input
@@ -57,7 +72,6 @@ export function LoginCard() {
             placeholder="Email Address"
             aria-label="Email address"
             autoComplete="email"
-            defaultValue="demo@tranche.finance"
             required
           />
           <input
@@ -66,25 +80,20 @@ export function LoginCard() {
             placeholder="Password"
             aria-label="Password"
             autoComplete="current-password"
-            defaultValue="tranche2026"
             required
           />
           <p className="lg-forgot">
             Forgot Password? <Link href="/signup">Click here</Link>
           </p>
-          <button type="submit" className="lg-login">Log in</button>
+          {error && <p className="lg-error" role="alert">{error}</p>}
+          <button type="submit" className="lg-login" disabled={busy}>{busy ? "Logging in…" : "Log in"}</button>
         </form>
 
         <p className="lg-or">or sign in with</p>
         <button
           type="button"
           className="lg-alt"
-          onClick={() => {
-            try {
-              localStorage.setItem("tranche_user", JSON.stringify({ email: "google.user@tranche.finance" }));
-            } catch {}
-            router.push("/dashboard");
-          }}
+          onClick={() => setError("Google sign-in isn't available yet. Log in with your email and password.")}
         >
           <span className="lg-g" aria-hidden="true">G</span>
           Google (Demo)

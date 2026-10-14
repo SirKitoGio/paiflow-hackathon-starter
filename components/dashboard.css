@@ -880,3 +880,16 @@
 /* Live group card: same card, marked as live, link styled as the View button */
 .db-purpose-card-live { outline: 2px solid #176B45; outline-offset: -2px; }
 .db-purpose-card-live .db-card-btn { text-decoration: none; color: #0E241C; overflow-wrap: normal; }
+
+.db-logout {
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #6B7280;
+  font: 500 12px 'Inter', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.db-logout:hover { border-color: #176B45; color: #176B45; }
