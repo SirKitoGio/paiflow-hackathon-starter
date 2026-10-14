@@ -28,21 +28,6 @@ export type PaluwaganItem = {
   createdAt?: string;
 };
 
-const DEFAULT_PALUWAGAN: PaluwaganItem = {
-  id: "pal-default",
-  purpose: "<<Purpose Name>>",
-  goal: "",
-  start: "",
-  deadline: "",
-  recipients: [
-    { email: "julianna@tranche.finance", share: "20000" },
-    { email: "rent.landlord@stellar.org", share: "15000" },
-    { email: "emergency.vault@stellar.org", share: "15000" },
-  ],
-  signature: "verified",
-  createdAt: "2026-10-14T00:00:00.000Z",
-};
-
 function formatCardDate(iso: string): string {
   if (!iso) return "";
   const parts = iso.split("-");
@@ -71,7 +56,7 @@ function formatCardGoal(goal: string): string {
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState<"home" | "wallet" | "create" | "user">("home");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [paluwagans, setPaluwagans] = useState<PaluwaganItem[]>([DEFAULT_PALUWAGAN]);
+  const [paluwagans, setPaluwagans] = useState<PaluwaganItem[]>([]);
   const [selectedPaluwagan, setSelectedPaluwagan] = useState<PaluwaganItem | null>(null);
   const router = useRouter();
   const [group, setGroup] = useState<GroupSummary | null>(null);
@@ -88,8 +73,8 @@ export function Dashboard() {
       const saved = localStorage.getItem("tranche_paluwagans");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setPaluwagans(parsed);
+        if (Array.isArray(parsed)) {
+          setPaluwagans(parsed.filter((item: PaluwaganItem) => item.id !== "pal-default"));
         }
       }
     } catch {}
@@ -108,8 +93,7 @@ export function Dashboard() {
     };
 
     setPaluwagans((prev) => {
-      const filtered = prev.filter((item) => item.id !== "pal-default");
-      const updated = [newItem, ...filtered];
+      const updated = [newItem, ...prev];
       try {
         localStorage.setItem("tranche_paluwagans", JSON.stringify(updated));
       } catch {}
@@ -122,11 +106,10 @@ export function Dashboard() {
   const handleDeletePaluwagan = (id: string) => {
     setPaluwagans((prev) => {
       const updated = prev.filter((item) => item.id !== id);
-      const finalList = updated.length > 0 ? updated : [DEFAULT_PALUWAGAN];
       try {
-        localStorage.setItem("tranche_paluwagans", JSON.stringify(finalList));
+        localStorage.setItem("tranche_paluwagans", JSON.stringify(updated));
       } catch {}
-      return finalList;
+      return updated;
     });
     setSelectedPaluwagan(null);
   };
@@ -497,16 +480,14 @@ export function Dashboard() {
               <Link href="/pay" className="db-detail-btn-action">
                 Make Contribution
               </Link>
-              {selectedPaluwagan.id !== "pal-default" && (
-                <button
-                  type="button"
-                  className="db-detail-btn-secondary"
-                  onClick={() => handleDeletePaluwagan(selectedPaluwagan.id)}
-                  style={{ color: "#EF4444" }}
-                >
-                  Delete
-                </button>
-              )}
+              <button
+                type="button"
+                className="db-detail-btn-secondary"
+                onClick={() => handleDeletePaluwagan(selectedPaluwagan.id)}
+                style={{ color: "#EF4444" }}
+              >
+                Delete
+              </button>
               <button
                 type="button"
                 className="db-detail-btn-secondary"
