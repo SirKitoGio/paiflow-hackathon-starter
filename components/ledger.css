@@ -730,3 +730,34 @@
     max-width: 100%;
   }
 }
+
+/* Payout frequency + payment schedule (under the Contract Date fields) */
+.lgr-freq-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 440px;
+  margin-top: 10px;
+}
+.lgr-freq-field { cursor: pointer; }
+.lgr-freq-select {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: #1F2429;
+  font: 600 11px 'Inter', sans-serif;
+  text-align: right;
+  cursor: pointer;
+  outline: none;
+  color-scheme: light;
+}
+.lgr-schedule {
+  margin: 0 2px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: #4C5D36;
+}
+.lgr-per-payment { font-weight: 600; color: #176B45; }

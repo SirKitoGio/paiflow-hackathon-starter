@@ -23,6 +23,9 @@ export type PaluwaganItem = {
   goal: string;
   start: string;
   deadline: string;
+  frequency?: string;
+  payments?: number;
+  perPayment?: string;
   recipients?: { email: string; share: string }[];
   signature?: string;
   createdAt?: string;
@@ -110,6 +113,9 @@ export function Dashboard() {
       goal: data.goal.trim(),
       start: data.start,
       deadline: data.deadline,
+      frequency: data.frequency,
+      payments: data.payments,
+      perPayment: data.perPayment,
       recipients: data.recipients,
       signature: data.signature,
       createdAt: new Date().toISOString(),
@@ -450,6 +456,16 @@ export function Dashboard() {
                   </div>
                 </div>
               </div>
+              {selectedPaluwagan.frequency && (
+                <div className="db-detail-date-box" style={{ marginTop: 10 }}>
+                  <div className="db-detail-date-label">Payout frequency</div>
+                  <div className="db-detail-date-val">
+                    {selectedPaluwagan.frequency}
+                    {selectedPaluwagan.payments ? ` · ${selectedPaluwagan.payments} payments` : ""}
+                    {selectedPaluwagan.perPayment ? ` · ${selectedPaluwagan.perPayment} per member each payment` : ""}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Recipients Section */}
