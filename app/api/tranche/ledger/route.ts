@@ -2,7 +2,7 @@ import { PaiflowError, requireIntegration } from "@/lib/paiflow";
 import { handle } from "@/lib/http";
 import { getGroup, stellarExpertTx } from "@/lib/tranche/registry";
 import { readStore } from "@/lib/tranche/store";
-import { publicContribution, syncEvents } from "@/lib/tranche/ledger";
+import { activeRound, payoutsFor, publicContribution, syncEvents } from "@/lib/tranche/ledger";
 
 const MAX_PAGES = 5;
 
@@ -19,6 +19,9 @@ export async function GET() {
     if (live) {
       const before = await readStore();
       const rounds = new Set(before.contributions.map((c) => c.round));
+      // Also read the active round, so payments made on the hosted trigger page appear.
+      const active = activeRound(group, before);
+      if (active) rounds.add(active.index);
       for (const round of rounds)
         for (let page = 0; page < MAX_PAGES && (await syncEvents(round)); page++);
     }
@@ -33,11 +36,13 @@ export async function GET() {
           ...publicContribution(c),
           member: group.members.find((m) => m.id === c.memberId)?.displayName,
           explorerUrl: stellarExpertTx(c.txHash),
+          payouts: payoutsFor(group, state.events, c.txHash),
           events: byTx.get(c.txHash) ?? [],
         })),
       events: state.events.map((e) => ({ ...e, explorerUrl: stellarExpertTx(e.txHash) })),
       releases: state.releases.map(({ xdr: _xdr, ...r }) => ({
         ...r,
+        kind: r.kind ?? "release",
         explorerUrl: r.status === "SUCCESS" ? stellarExpertTx(r.txHash) : null,
       })),
     };

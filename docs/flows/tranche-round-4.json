@@ -1,0 +1,62 @@
+{
+  "nodes": [
+    {
+      "id": "receive",
+      "type": "on_receive",
+      "config": {
+        "asset": {
+          "kind": "native"
+        }
+      }
+    },
+    {
+      "id": "split",
+      "type": "split",
+      "config": {
+        "asset": {
+          "kind": "native"
+        },
+        "recipients": [
+          {
+            "label": "Wallet",
+            "address": "PENDING:MEMBER_4",
+            "mode": "percentage",
+            "bps": 9200,
+            "payoutMode": "crypto"
+          },
+          {
+            "label": "Vault",
+            "address": "PENDING:TRANCHE_VAULT",
+            "mode": "percentage",
+            "bps": 500,
+            "payoutMode": "crypto"
+          },
+          {
+            "label": "Fund",
+            "address": "PENDING:SAFETY_FUND",
+            "mode": "percentage",
+            "bps": 300,
+            "payoutMode": "crypto"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "receive-split",
+      "source": "receive",
+      "target": "split"
+    }
+  ],
+  "positions": {
+    "receive": {
+      "x": 0,
+      "y": 0
+    },
+    "split": {
+      "x": 0,
+      "y": 160
+    }
+  }
+}

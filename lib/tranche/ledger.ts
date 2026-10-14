@@ -7,13 +7,21 @@ import {
   type Prepared,
   type Submitted,
 } from "@/lib/paiflow";
-import { getRound, receiverRound, type Group } from "@/lib/tranche/registry";
+import {
+  getGroup,
+  getRound,
+  memberById,
+  memberByKey,
+  receiverRound,
+  type Group,
+} from "@/lib/tranche/registry";
 import {
   readStore,
   withStore,
   type Contribution,
   type ContributionStatus,
   type State,
+  type StoredEvent,
 } from "@/lib/tranche/store";
 
 const now = () => new Date().toISOString();
@@ -142,16 +150,115 @@ export async function syncEvents(round: number) {
   const { eventCursors } = await readStore();
   const cursor = eventCursors[round];
   const page = await listEvents({ cursor }, round);
-  await withStore((state) => {
+  const fresh = await withStore((state) => {
     const seen = new Set(state.events.map((e) => e.eventId));
+    const added: StoredEvent[] = [];
     for (const item of page.items)
       if (!seen.has(item.eventId)) {
         seen.add(item.eventId);
-        state.events.push({ ...item, round });
+        added.push({ ...item, round });
       }
+    state.events.push(...added);
     if (page.nextCursor) state.eventCursors[round] = page.nextCursor;
+    return added;
   });
+  await importHosted(round, fresh);
   return page.hasMore;
+}
+
+const isStroops = (v: unknown): v is string => typeof v === "string" && /^\d{1,39}$/.test(v);
+
+/**
+ * A member who paid on Paiflow's hosted trigger page has no app record. Events alone are
+ * not proof, so each new member RECEIVE is checked with transactionStatus. Only SUCCESS
+ * creates a contribution, and only one per member per round.
+ */
+async function importHosted(round: number, items: StoredEvent[]) {
+  const group = getGroup();
+  for (const item of items) {
+    if (item.kind !== "RECEIVE") continue;
+    const data = item.data as { from?: unknown; amount?: unknown } | null;
+    const from = typeof data?.from === "string" ? data.from : "";
+    const member = memberByKey(group, from);
+    if (!member || !isStroops(data?.amount)) continue;
+    if (BigInt(data.amount) < BigInt(group.contributionStroops)) continue;
+    const duplicate = (s: State) =>
+      s.contributions.some((c) => c.txHash === item.txHash) ||
+      !!openContribution(s, round, member.id);
+    if (duplicate(await readStore())) continue;
+    let status;
+    try {
+      status = await transactionStatus(item.txHash, round);
+    } catch {
+      continue; // Uncertain: try again on the next sync.
+    }
+    if (status.status !== "SUCCESS") continue;
+    await withStore((s) => {
+      if (duplicate(s)) return;
+      s.contributions.push({
+        id: randomUUID(),
+        round,
+        memberId: member.id,
+        from,
+        amountStroops: data.amount as string,
+        txHash: item.txHash,
+        status: "SUCCESS",
+        xdr: "",
+        expiresAt: item.occurredAt,
+        ledger: status.ledger ?? item.ledger,
+        source: "hosted",
+        createdAt: item.occurredAt,
+        updatedAt: now(),
+      });
+    });
+  }
+}
+
+/** Display label for a payout address: Vault, Fund, the receiver's destination label, or a member. */
+export function labelFor(group: Group, round: number, address: string) {
+  if (address === process.env.TRANCHE_VAULT_ACCOUNT) return "Vault";
+  if (address === process.env.TRANCHE_FUND_ACCOUNT) return "Fund";
+  const r = group.rounds.find((x) => x.index === round);
+  const receiver = r && memberById(group, r.receiverMemberId);
+  const destination =
+    receiver &&
+    group.destinations.find((d) => d.slot === receiver.slot && d.publicKey === address);
+  if (destination) return destination.label;
+  return memberByKey(group, address)?.displayName ?? "Other";
+}
+
+export type Payout = { label: string; address: string; bps: number; amountStroops: string };
+/**
+ * The split of one payment, from its RECEIVE and PAYOUT events. Paiflow's PAYOUT event
+ * reports recipient amounts as "0", so amounts come from bps of the received amount,
+ * with the rounding remainder on the last recipient (Paiflow's Split rule).
+ */
+export function payoutsFor(group: Group, events: StoredEvent[], txHash: string): Payout[] {
+  const receive = events.find((e) => e.txHash === txHash && e.kind === "RECEIVE");
+  const payout = events.find((e) => e.txHash === txHash && e.kind === "PAYOUT");
+  const total = (receive?.data as { amount?: unknown } | null)?.amount;
+  const raw = (payout?.data as { recipients?: unknown } | null)?.recipients;
+  if (!payout || !Array.isArray(raw)) return [];
+  const rows = raw.filter(
+    (r): r is { address: string; bps: number; amount?: unknown } =>
+      !!r && typeof r.address === "string" && Number.isInteger(r.bps),
+  );
+  const reported = rows.every((r) => isStroops(r.amount) && r.amount !== "0");
+  let remaining = isStroops(total) ? BigInt(total) : 0n;
+  return rows.map((r, i) => {
+    let amount: bigint;
+    if (reported) amount = BigInt(r.amount as string);
+    else if (!isStroops(total)) amount = 0n;
+    else if (i === rows.length - 1) amount = remaining;
+    else amount = (BigInt(total) * BigInt(r.bps)) / 10_000n;
+    remaining -= amount;
+    return {
+      label: labelFor(group, payout.round, r.address),
+      address: r.address,
+      bps: r.bps,
+      amountStroops: amount.toString(),
+    };
+  });
 }
 
 export type MemberRoundStatus = "paid" | "pending" | "due" | "late";
@@ -187,17 +294,28 @@ const share = (amount: string, bps: number) =>
   (BigInt(amount) * BigInt(bps)) / 10_000n;
 
 /**
- * Held tranche per receiver. Each SUCCESS contribution in round r adds its vault bps to
- * round r's receiver. Contract rounding can differ by a stroop; Horizon is the final balance.
+ * Held tranche per receiver: everything the round r Split paid to the Vault counts for
+ * round r's receiver. It uses PAYOUT events, and falls back to vault bps for a SUCCESS
+ * contribution whose event has not arrived yet. Horizon holds the final balance.
  */
 export function vaultShares(group: Group, state: State) {
+  const vault = process.env.TRANCHE_VAULT_ACCOUNT;
   return group.members.map((m) => {
     const own = receiverRound(group, m.id);
     let held = 0n;
-    if (own)
+    if (own) {
+      const roundEvents = state.events.filter((e) => e.round === own.index);
+      const paidOut = new Set<string>();
+      for (const e of roundEvents)
+        if (e.kind === "PAYOUT" && !paidOut.has(e.txHash)) {
+          paidOut.add(e.txHash);
+          for (const p of payoutsFor(group, roundEvents, e.txHash))
+            if (vault && p.address === vault) held += BigInt(p.amountStroops);
+        }
       for (const c of state.contributions)
-        if (c.round === own.index && c.status === "SUCCESS")
+        if (c.round === own.index && c.status === "SUCCESS" && !paidOut.has(c.txHash))
           held += share(c.amountStroops, own.splitBps.vault);
+    }
     let released = 0n;
     for (const r of state.releases)
       if (r.source === "vault" && r.memberId === m.id && r.status === "SUCCESS")

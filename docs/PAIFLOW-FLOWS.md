@@ -93,4 +93,12 @@ There is no Vault recipient here: the last receiver has already paid every round
 | R2 | Optional, about 1:30 PM | Shows round selection and makes a vault release possible (member 1 pays R2 on time) |
 | R3–R5 | After the event | Not needed for the demo. In the pitch, show them as the full cycle. |
 
-If a Split refuses 4 recipients, merge Rent and Wallet into the member's wallet (for example R1: Member 1 = 7700).
+A Split allows up to 20 recipients (per `llms.md`), so 4 recipients is fine. Each recipient needs a different address and more than 0 bps.
+
+## Flow files (graph JSON)
+`docs/flows/tranche-round-1.json` to `tranche-round-5.json` hold the exact graph of each flow (`on_receive` with native XLM → percentage `split`), with `PENDING:<NAME>` placeholder addresses. To fill in the real addresses:
+
+1. `cp docs/flows/addresses.example.json docs/flows/addresses.json` and fill in the **public** G-addresses.
+2. `node docs/flows/fill-addresses.mjs`. This checks the keys, refuses S-secrets, checks that bps total 10000 and that there are no duplicate addresses, then writes `docs/flows/filled/tranche-round-N.json`.
+
+If the Paiflow canvas can import a graph, import the filled file. If it can't, build it by hand from the tables above; the JSON is the exact reference.

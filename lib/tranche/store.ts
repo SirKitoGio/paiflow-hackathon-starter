@@ -27,6 +27,8 @@ export type Contribution = {
   signedXdr?: string;
   ledger?: number;
   error?: { code: string; message: string };
+  // "hosted": paid on Paiflow's trigger page, imported from events after a SUCCESS status check.
+  source?: "app" | "hosted";
   createdAt: string;
   updatedAt: string;
 };
@@ -35,6 +37,10 @@ export type ReleaseStatus = "COLLECTING" | "PENDING" | "SUCCESS" | "FAILED" | "E
 export type Release = {
   id: string;
   source: "vault" | "fund";
+  // release: a held tranche back to its receiver. forfeit: a late member's held tranche to
+  // the round receiver. cover: the Safety Fund pays the round receiver for a missed payment.
+  kind?: "release" | "forfeit" | "cover";
+  // release: the receiver. forfeit and cover: the member who missed the payment.
   memberId: string;
   round: number;
   destination: string;

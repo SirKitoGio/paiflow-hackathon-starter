@@ -34,13 +34,14 @@ Waiting on the team (an agent cannot do these): team credentials, 9 Friendbot-fu
 
 Keep the user informed: before each task, say in plain language what you will do and why. After it, say what changed and how you checked it. Ask clearly for anything you need from them, and report failures or skipped steps directly. Keep the deadlines in view. The full guidance is in `docs/HANDOFF-backend.md`.
 
-Agent tasks, in priority order:
-1. Fill `config/group.json` with the public G-addresses the team provides (5 members, Rent and Wallet destinations). Until then every member key is `null` and pay refuses.
-2. Connect the Pay screen (`components/starter-app.tsx`, currently calling `/api/pay`) to `POST /api/tranche/pay`: send `{round, from}`, sign the returned XDR in Freighter, send `{round, signedXdr}`, then poll `GET /api/tranche/pay/status` with backoff until SUCCESS. Reuse the starter's recovery and Web Locks in `lib/hooks/use-wallet-operation.ts`. Show the hash with a Stellar Expert link.
-3. Dashboard screen from `GET /api/tranche/group`: members, slots, active round, paid/pending/due/late.
-4. Ledger screen from `GET /api/tranche/ledger`: contributions with their RECEIVE/PAYOUT events and Stellar Expert links.
-5. Optional: Vault screen from `GET /api/tranche/vault`, with a create release button (`POST /api/tranche/vault/release`) and Freighter signing per member (`POST /api/tranche/vault/release/[id]/sign`). Test with a tiny amount first.
-6. Optional: when the team adds round 2 to `TRANCHE_ROUNDS_JSON`, round 2 becomes active only after round 1 is fully paid or past its deadline. Shift the deadlines in `config/group.json` if the demo needs it.
-7. Not built (pitch future work): a route to pay a missed contribution from the Safety Fund (`vault.ts` already supports `source: "fund"`), the end-of-cycle Fund refund, automatic release, USDC.
+Backend status (2026-10-14, about 1 PM): Handoff tasks 2–6 are done. Payout breakdown in the ledger; hosted-page payments imported after a SUCCESS check; vault shares from PAYOUT events; Safety Fund cover (`POST fund/cover`); forfeit (`POST vault/forfeit`); cancel (`POST vault/release/[id]/cancel`) and automatic expiry. The sign route works for vault and fund payments. The frontend is built separately by a teammate against `docs/API.md`; don't build UI in this repo unless asked.
+
+Remaining backend work:
+1. Fill in `config/group.json` for Members 2–5 (and the R2 car lender destination) when their G-addresses arrive. Done so far: Member 1, landlord, vault, fund.
+2. When R2 is deployed, add it to `TRANCHE_ROUNDS_JSON` in `.env.local` (the user types the token). To make R2 the active round for the demo, move round 1's `deadline` in `config/group.json` to a time already passed.
+3. Live test a vault release once the multisig is set up (5 signers, threshold 3, master key weight 0). Today the Vault and Fund still have threshold 1 and master key weight 1.
+4. Optional: the Safety Fund refund at the end of the cycle.
+
+Live findings (2026-10-14): R1 is deployed as UUID `c091ee3b-cc09-4704-b1e2-e41b326aede7` (contract `CBNUC5…LDWO`), and team mode connects (see `docs/QUALIFICATION.md`). Paiflow PAYOUT event `data.recipients[]` has `address` and `bps`, but `amount` is `"0"`. Calculate each payout as bps × the RECEIVE amount (bigint), or read it from Horizon. RECEIVE `data` is `{from, asset, amount}`.
 
 Notes: Node 26 runs this with an engines warning (wants 22). If pnpm is not installed, use `npx -y pnpm@10.4.1 <cmd>`. The PRD diagram says SQLite, but the ledger is a JSON file at `data/ledger.json`. Delete that file to reset local test data, but never after real testnet payments, because it holds the signed envelopes used for retries.

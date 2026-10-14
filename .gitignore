@@ -6,3 +6,5 @@ node_modules/
 
 # Tranche local ledger (payment records and signed envelopes)
 data/
+docs/flows/addresses.json
+docs/flows/filled/

@@ -8,7 +8,10 @@ import { capabilities } from "@/lib/paiflow";
 import { POST as pay } from "@/app/api/tranche/pay/route";
 import { GET as group } from "@/app/api/tranche/group/route";
 import { POST as release } from "@/app/api/tranche/vault/release/route";
-import { syncEvents, vaultShares } from "@/lib/tranche/ledger";
+import { POST as cover } from "@/app/api/tranche/fund/cover/route";
+import { POST as forfeit } from "@/app/api/tranche/vault/forfeit/route";
+import { POST as cancel } from "@/app/api/tranche/vault/release/[id]/cancel/route";
+import { payoutsFor, syncEvents, vaultShares } from "@/lib/tranche/ledger";
 import { getGroup } from "@/lib/tranche/registry";
 import { readStore, withStore } from "@/lib/tranche/store";
 import { fixtureAddress, fixturePrepared, fixtureTransaction } from "./transaction-fixture";
@@ -39,10 +42,12 @@ const post = (url: string, body: unknown, origin = "http://localhost") =>
     body: JSON.stringify(body),
   });
 let mockFetch: ReturnType<typeof vi.fn>;
+let groupFile = "";
 
 beforeEach(() => {
   const dir = mkdtempSync(path.join(tmpdir(), "tranche-"));
-  writeFileSync(path.join(dir, "group.json"), JSON.stringify(groupConfig));
+  groupFile = path.join(dir, "group.json");
+  writeFileSync(groupFile, JSON.stringify(groupConfig));
   vi.stubEnv("TRANCHE_GROUP_FILE", path.join(dir, "group.json"));
   vi.stubEnv("TRANCHE_DATA_FILE", path.join(dir, "ledger.json"));
   vi.stubEnv("PAIFLOW_MODE", "team");
@@ -67,11 +72,11 @@ afterEach(() => {
 
 it("uses the round's own deployment and token", async () => {
   await capabilities(2);
-  const [url, init] = mockFetch.mock.calls[0];
+  const [url, init] = mockFetch.mock.calls[0]!;
   expect(String(url)).toContain(round2.id);
   expect(init.headers.Authorization).toBe(`Bearer ${round2.token}`);
   await capabilities();
-  expect(String(mockFetch.mock.calls[1][0])).toContain(round1.id);
+  expect(String(mockFetch.mock.calls[1]![0])).toContain(round1.id);
 });
 it.each(["not json", "{}", JSON.stringify([{ round: 2, deploymentId: "x", token: round2.token }])])(
   "refuses a bad TRANCHE_ROUNDS_JSON %s",
@@ -122,7 +127,7 @@ it("deduplicates events by eventId and keeps the cursor", async () => {
   const state = await readStore();
   expect(state.events).toHaveLength(1);
   expect(state.eventCursors["1"]).toBe("c1");
-  expect(String(mockFetch.mock.calls[1][0])).toContain("cursor=c1");
+  expect(String(mockFetch.mock.calls[1]![0])).toContain("cursor=c1");
 });
 
 it("computes held tranches with bigint stroops", async () => {
@@ -141,4 +146,92 @@ it("computes held tranches with bigint stroops", async () => {
 it("refuses a vault release without a confirmed payment", async () => {
   expect((await release(post("/api/tranche/vault/release", { memberId: "m1", round: 2 }))).status).toBe(409);
   expect((await release(post("/api/tranche/vault/release", { memberId: "m1", round: 1 }))).status).toBe(409);
+});
+
+const vault = Keypair.random().publicKey();
+const fund = Keypair.random().publicKey();
+const landlord = Keypair.random().publicKey();
+const receive = (tx: string, from: string, amount = "10000000") => ({
+  id: `r-${tx}`, eventId: `r-${tx}`, kind: "RECEIVE", topic: null, ledger: 7, txHash: tx,
+  occurredAt: "2026-10-14T04:20:00Z", data: { from, asset: "XLM", amount },
+});
+const payout = (tx: string) => ({
+  id: `p-${tx}`, eventId: `p-${tx}`, kind: "PAYOUT", topic: null, ledger: 7, txHash: tx,
+  occurredAt: "2026-10-14T04:20:00Z",
+  data: { recipients: [
+    { bps: 4500, amount: "0", address: landlord },
+    { bps: 3200, amount: "0", address: fixtureAddress },
+    { bps: 2000, amount: "0", address: vault },
+    { bps: 300, amount: "0", address: fund },
+  ] },
+});
+
+it("labels payouts and derives amounts from bps when Paiflow reports 0", () => {
+  vi.stubEnv("TRANCHE_VAULT_ACCOUNT", vault);
+  vi.stubEnv("TRANCHE_FUND_ACCOUNT", fund);
+  const g = { ...getGroup(), destinations: [
+    { slot: 1, label: "Rent", publicKey: landlord, percentBps: 4500 },
+    { slot: 1, label: "Wallet", publicKey: fixtureAddress, percentBps: 3200 },
+  ] };
+  const events = [receive("t1", fixtureAddress, "10000001"), payout("t1")].map((e) => ({ ...e, round: 1 }));
+  const rows = payoutsFor(g, events, "t1");
+  expect(rows.map((r) => [r.label, r.amountStroops])).toEqual([
+    ["Rent", "4500000"], ["Wallet", "3200000"], ["Vault", "2000000"], ["Fund", "300001"],
+  ]);
+});
+
+it("imports a hosted-page payment only after a SUCCESS status check", async () => {
+  vi.stubEnv("TRANCHE_VAULT_ACCOUNT", vault);
+  let status = "PENDING";
+  mockFetch.mockImplementation(async (url: URL) => {
+    if (url.pathname.endsWith("/events"))
+      return json({ data: { items: [receive("h1", fixtureAddress), payout("h1"), receive("h2", fixtureAddress)], nextCursor: "c", hasMore: false } });
+    if (url.pathname.includes("/transactions/"))
+      return json({ data: { txHash: "h1", network: "testnet", status, ledger: 7 } });
+    return json({ error: { code: "NOT_FOUND", message: "x" } }, 404);
+  });
+  await syncEvents(1);
+  expect((await readStore()).contributions).toHaveLength(0);
+  // A later sync sees no new events, so reset the cursor state to re-read them with SUCCESS.
+  status = "SUCCESS";
+  await withStore((s) => { s.events = []; s.eventCursors = {}; });
+  await syncEvents(1);
+  const state = await readStore();
+  expect(state.contributions).toHaveLength(1);
+  expect(state.contributions[0]).toMatchObject({ memberId: "m1", source: "hosted", status: "SUCCESS", txHash: "h1" });
+  // Vault share comes from the PAYOUT event: 20% of 1 XLM.
+  expect(vaultShares(getGroup(), state)[0]!.heldStroops).toBe("2000000");
+});
+
+it("refuses Safety Fund cover and forfeit unless the member is late", async () => {
+  // Before the deadline: refused.
+  expect((await cover(post("/api/tranche/fund/cover", { round: 1, memberId: "m2" }))).status).toBe(409);
+  // Past the deadline: the receiver cannot be covered, a paid member is not late.
+  const late = { ...groupConfig, rounds: groupConfig.rounds.map((r, i) => i === 0 ? { ...r, deadline: "2026-01-01T00:00:00Z" } : r) };
+  writeFileSync(groupFile, JSON.stringify(late));
+  await withStore((s) => {
+    s.contributions.push({ id: "c2", round: 1, memberId: "m2", from: members[1]!, amountStroops: "10000000",
+      txHash: "x2", status: "SUCCESS", xdr: "", expiresAt: "", createdAt: "", updatedAt: "" });
+  });
+  expect((await cover(post("/api/tranche/fund/cover", { round: 1, memberId: "m1" }))).status).toBe(409);
+  expect((await cover(post("/api/tranche/fund/cover", { round: 1, memberId: "m2" }))).status).toBe(409);
+  expect((await forfeit(post("/api/tranche/vault/forfeit", { round: 1, memberId: "m2" }))).status).toBe(409);
+  // m3 is late but holds no tranche, so there is nothing to forfeit.
+  expect((await forfeit(post("/api/tranche/vault/forfeit", { round: 1, memberId: "m3" }))).status).toBe(409);
+  expect((await cover(post("/api/tranche/fund/cover", { round: 1, memberId: "nobody" }))).status).toBe(409);
+});
+
+it("cancels an unsigned release only", async () => {
+  const base = { source: "vault" as const, kind: "release" as const, memberId: "m1", round: 2, destination: fixtureAddress,
+    amountStroops: "1", txHash: "t", xdr: "", expiresAt: new Date(Date.now() + 60_000).toISOString(), createdAt: "", updatedAt: "" };
+  const a = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const b = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  await withStore((s) => {
+    s.releases.push({ ...base, id: a, signers: [], status: "COLLECTING" });
+    s.releases.push({ ...base, id: b, signers: [fixtureAddress], status: "COLLECTING" });
+  });
+  const ctx = (id: string) => ({ params: Promise.resolve({ id }) });
+  const ok = await cancel(post(`/api/tranche/vault/release/${a}/cancel`, {}), ctx(a));
+  expect((await ok.json()).data.status).toBe("EXPIRED");
+  expect((await cancel(post(`/api/tranche/vault/release/${b}/cancel`, {}), ctx(b))).status).toBe(409);
 });
