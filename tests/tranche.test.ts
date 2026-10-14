@@ -235,3 +235,19 @@ it("cancels an unsigned release only", async () => {
   expect((await ok.json()).data.status).toBe("EXPIRED");
   expect((await cancel(post(`/api/tranche/vault/release/${b}/cancel`, {}), ctx(b))).status).toBe(409);
 });
+
+it("a confirmed hosted payment replaces an unsigned app preparation", async () => {
+  await withStore((s) => {
+    s.contributions.push({ id: "p1", round: 1, memberId: "m1", from: fixtureAddress, amountStroops: "10000000",
+      txHash: "prep", status: "PREPARED", xdr: "x", expiresAt: new Date(Date.now() + 60_000).toISOString(), createdAt: "", updatedAt: "" });
+  });
+  mockFetch.mockImplementation(async (url: URL) => {
+    if (url.pathname.endsWith("/events"))
+      return json({ data: { items: [receive("h9", fixtureAddress)], nextCursor: "c", hasMore: false } });
+    return json({ data: { txHash: "h9", network: "testnet", status: "SUCCESS", ledger: 7 } });
+  });
+  await syncEvents(1);
+  const state = await readStore();
+  expect(state.contributions.find((c) => c.id === "p1")!.status).toBe("EXPIRED");
+  expect(state.contributions.find((c) => c.txHash === "h9")).toMatchObject({ status: "SUCCESS", source: "hosted" });
+});

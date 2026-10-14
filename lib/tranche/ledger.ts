@@ -182,9 +182,14 @@ async function importHosted(round: number, items: StoredEvent[]) {
     const member = memberByKey(group, from);
     if (!member || !isStroops(data?.amount)) continue;
     if (BigInt(data.amount) < BigInt(group.contributionStroops)) continue;
+    // An unsigned app preparation was never submitted, so it doesn't block a confirmed
+    // hosted payment; it is expired below when the hosted payment is imported.
+    const blocking = (s: State) => {
+      const open = openContribution(s, round, member.id);
+      return open && !(open.status === "PREPARED" && !open.signedXdr) ? open : undefined;
+    };
     const duplicate = (s: State) =>
-      s.contributions.some((c) => c.txHash === item.txHash) ||
-      !!openContribution(s, round, member.id);
+      s.contributions.some((c) => c.txHash === item.txHash) || !!blocking(s);
     if (duplicate(await readStore())) continue;
     let status;
     try {
@@ -195,6 +200,11 @@ async function importHosted(round: number, items: StoredEvent[]) {
     if (status.status !== "SUCCESS") continue;
     await withStore((s) => {
       if (duplicate(s)) return;
+      const stale = openContribution(s, round, member.id);
+      if (stale) {
+        stale.status = "EXPIRED";
+        stale.updatedAt = now();
+      }
       s.contributions.push({
         id: randomUUID(),
         round,

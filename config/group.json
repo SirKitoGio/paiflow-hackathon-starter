@@ -13,25 +13,25 @@
       "id": "m2",
       "slot": 2,
       "displayName": "Member 2",
-      "publicKey": null
+      "publicKey": "GBLSWORVLUDQZSUZPBCIQRN262HSAAGYWMZYIHKGTDIYYWKKDUL7ROM7"
     },
     {
       "id": "m3",
       "slot": 3,
       "displayName": "Member 3",
-      "publicKey": null
+      "publicKey": "GDGV4SFD3PDMPOF53YXDIMNWFEWBAUWSVDMHVSOG5Z4F7S63CMUSB4CE"
     },
     {
       "id": "m4",
       "slot": 4,
       "displayName": "Member 4",
-      "publicKey": null
+      "publicKey": "GDV6K7WZZII4TXAD3CFMRXPUUC4RTJBCOLDD7NVYOK255JYOY4G7SDDN"
     },
     {
       "id": "m5",
       "slot": 5,
       "displayName": "Member 5",
-      "publicKey": null
+      "publicKey": "GDJXDFSGKTEBA3IF4DW5B5ZWZ2YYKR2RVLZUEAZUC5T5QUXHER6Y543B"
     }
   ],
   "destinations": [
@@ -45,6 +45,18 @@
       "slot": 1,
       "label": "Wallet",
       "publicKey": "GCXRU43SEU2YDEEV4ZALE3SPKTZJ3SGV4C47F562CV2LHCGPE5IAJFUI",
+      "percentBps": 3200
+    },
+    {
+      "slot": 2,
+      "label": "Car",
+      "publicKey": "GDVKQFPXFYKOXKTDHRXHRTUTUFNSV6C4A3VNRYJT4FQ5M3NRH7BGR3FT",
+      "percentBps": 5000
+    },
+    {
+      "slot": 2,
+      "label": "Wallet",
+      "publicKey": "GBLSWORVLUDQZSUZPBCIQRN262HSAAGYWMZYIHKGTDIYYWKKDUL7ROM7",
       "percentBps": 3200
     }
   ],
