@@ -284,9 +284,10 @@ export function LedgerModal({
                 type="text"
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
-                placeholder="Input target goal"
+                placeholder="Input target goal, e.g. 1500000"
                 inputMode="decimal"
                 pattern="\d+(\.\d{1,2})?"
+                title="Numbers only, in pesos. Example: 1500000"
                 className="lgr-input-field"
                 required
               />
@@ -341,9 +342,10 @@ export function LedgerModal({
                       type="text"
                       value={r.share}
                       onChange={(e) => setRow(i, { share: e.target.value })}
-                      placeholder="Input divided value"
+                      placeholder="Input divided value, e.g. 500000"
                       inputMode="decimal"
                       pattern="\d+(\.\d{1,2})?"
+                      title="Numbers only, in pesos. Example: 500000"
                       className="lgr-input-field"
                     />
                     <span className="lgr-peso-sign">₱</span>
