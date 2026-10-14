@@ -1,0 +1,344 @@
+/* DASHBOARD STYLING - PIXEL ACCURATE TO FIGMA SPEC & REFERENCE IMAGE */
+
+.db {
+  position: relative;
+  width: 1480px;
+  height: 1024px;
+  min-height: 1024px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #E1EDA0 0%, #FFFFFF 100%);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #0E241C;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.db-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Header: Tranche Logo + Wordmark */
+.db-header {
+  position: absolute;
+  left: 139px;
+  top: 29px;
+  height: 51px;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.db-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6.45px;
+  text-decoration: none;
+}
+
+/* Group 1: Logo with Ellipse 3 glow */
+.db-logo-group {
+  position: relative;
+  width: 45.41px;
+  height: 44.16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.db-brand-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 42.1053px;
+  line-height: 51px;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: #0E241C;
+}
+
+/* Frame 23: Left Navigation Sidebar */
+.db-sidebar {
+  box-sizing: border-box;
+  position: absolute;
+  width: 72.56px;
+  height: 552px;
+  left: 39px;
+  top: 97px;
+  background: #FFFFFF;
+  border-right: 2.84536px solid #CA8A04;
+  border-radius: 8.53608px;
+  z-index: 10;
+}
+
+/* Sidebar action buttons */
+.db-sidebar-btn {
+  box-sizing: border-box;
+  position: absolute;
+  width: 43.39px;
+  height: 43.39px;
+  left: 14.23px;
+  border-radius: 11.2819px;
+  border: 0.71134px solid #D3EFC9;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.db-sidebar-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Frame 24: Home Button */
+.db-btn-home {
+  top: 32.72px;
+  background: #D3EFC9;
+  border: 0.71134px solid #2B7B0E;
+}
+
+/* Frame 25: Wallet Button */
+.db-btn-wallet {
+  top: 87.49px;
+}
+
+/* Frame 24: Plus Math Button */
+.db-btn-plus {
+  top: 142.27px;
+}
+
+/* Double Right Arrow */
+.db-sidebar-arrow {
+  position: absolute;
+  width: 17.07px;
+  height: 14.83px;
+  left: 53.35px;
+  top: 282.4px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Frame 26: User Profile Button */
+.db-btn-user {
+  top: 479.44px;
+}
+
+/* Frame 27: Main Card */
+.db-main-card {
+  box-sizing: border-box;
+  position: absolute;
+  width: 1279px;
+  height: 852px;
+  left: 142px;
+  top: 97px;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 32px rgba(0, 0, 0, 0.25);
+  border-radius: 24px;
+  overflow: hidden;
+  z-index: 5;
+}
+
+/* Frame 43: Create Paluwagan Top Right Button */
+.db-create-paluwagan-btn {
+  box-sizing: border-box;
+  position: absolute;
+  width: 183.23px;
+  height: 33.52px;
+  left: 1066px;
+  top: 24px;
+  border: 1px solid #2B7B0E;
+  border-radius: 13.4074px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.db-create-paluwagan-btn:hover {
+  background: #F5F9F3;
+  transform: translateY(-1px);
+}
+
+.db-create-paluwagan-btn span {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12.3262px;
+  line-height: 84.98%;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: #000000;
+}
+
+/* Frame 28: Add Paluwagan Card */
+.db-card-create {
+  box-sizing: border-box;
+  position: absolute;
+  width: 164.22px;
+  height: 269px;
+  left: 37px;
+  top: 80px;
+  background: linear-gradient(180deg, #D3EFC9 0%, #F5F9F3 100%);
+  border: 1.48619px solid #D3EFC9;
+  border-radius: 17.8343px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+
+.db-card-create:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(43, 123, 14, 0.15);
+  border-color: #2B7B0E;
+}
+
+/* Ellipse 4: Magenta circle with shadow */
+.db-create-circle {
+  position: absolute;
+  width: 74.31px;
+  height: 74.31px;
+  left: 45.33px;
+  top: 85.46px;
+  background: #B54880;
+  box-shadow: 0px 2.97238px 2.97238px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.db-card-create:hover .db-create-circle {
+  transform: scale(1.06);
+}
+
+/* Modal Styling */
+.db-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 36, 28, 0.45);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.db-modal-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  width: min(480px, 100%);
+  padding: 28px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.db-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.db-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #0E241C;
+}
+
+.db-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #64748B;
+}
+
+.db-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.db-modal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.db-modal-form input,
+.db-modal-form select {
+  padding: 10px 14px;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.db-modal-form input:focus,
+.db-modal-form select:focus {
+  border-color: #2B7B0E;
+}
+
+.db-modal-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.db-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.db-modal-cancel {
+  padding: 9px 18px;
+  background: transparent;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.db-modal-submit {
+  padding: 9px 20px;
+  background: #0E241C;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.db-modal-submit:hover {
+  opacity: 0.9;
+}
+
+/* Responsive container adaptation */
+@media (max-width: 1480px) {
+  .db {
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+}

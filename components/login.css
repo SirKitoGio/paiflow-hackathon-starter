@@ -1,0 +1,169 @@
+.lg {
+  position: relative;
+  min-height: 100vh;
+  max-width: none;
+  margin: 0;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #fff;
+  color: #0e241c;
+}
+.lg-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 0%, #fff 0, transparent 40%),
+    radial-gradient(circle at 10% 90%, #d3efc9 0, transparent 40%),
+    linear-gradient(180deg, #e1eda0 0%, #fff 100%);
+}
+.lg-card {
+  position: relative;
+  box-sizing: border-box;
+  width: min(707px, 100%);
+  min-height: 707px;
+  margin: 0;
+  padding: 92px 24px 40px;
+  background: #f6f6f6;
+  border: 0;
+  border-radius: 24px;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lg-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 388px;
+  max-width: 100%;
+  margin-bottom: 44px;
+}
+.lg-brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  font-family: var(--mono), monospace;
+  font-weight: 500;
+  font-size: 24px;
+  color: #045307;
+}
+.lg-head h1 {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--anon), monospace;
+  font-weight: 700;
+  font-size: 54.6px;
+  line-height: 55px;
+  color: #0e241c;
+}
+.lg-head p {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 21px;
+  color: #949494;
+}
+.lg-head p a {
+  color: #1f3a19;
+}
+.lg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  width: 327px;
+  max-width: 100%;
+}
+.lg-form input {
+  box-sizing: border-box;
+  height: 40px;
+  margin: 0;
+  padding: 4px 24px;
+  background: transparent;
+  border: 1px solid #999;
+  border-radius: 14px;
+  font: 300 14px/21px inherit;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  color: #0e241c;
+}
+.lg-form input::placeholder {
+  color: #5c5959;
+}
+.lg-forgot {
+  margin: -9px 8px 0 0;
+  text-align: right;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: #5c5959;
+}
+.lg-forgot a {
+  color: #5c5959;
+  font-style: italic;
+  text-decoration: underline;
+}
+.lg-login {
+  height: 29px;
+  margin: 0;
+  padding: 4px 0;
+  border-radius: 18px;
+  background: #0e241c;
+  color: #e1eda0;
+  font-weight: 500;
+  font-size: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.lg-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(14, 36, 28, 0.25);
+}
+.lg-or {
+  margin: 27px 0 24px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 21px;
+  color: #535050;
+}
+.lg-alt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  color: #1f3a19;
+  font-weight: 300;
+  font-size: 14px;
+}
+.lg-g {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: #e4f2d3;
+  border-radius: 5px;
+  font-weight: 500;
+  color: #1f3a19;
+}
+.lg-terms {
+  width: 298px;
+  max-width: 100%;
+  margin: 50px 0 0;
+  text-align: center;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: #535050;
+}
+@media (max-width: 480px) {
+  .lg-head h1 {
+    font-size: 40px;
+  }
+}
