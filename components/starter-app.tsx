@@ -104,7 +104,7 @@ export function StarterApp({
           hosted API availability before transacting.
         </p>
       )}
-      <section aria-label="Customer wallet">
+      <section aria-label="Customer wallet" id="wallet">
         <h2>Customer wallet</h2>
         <p className="address">{address || "No wallet connected"}</p>
         <button
@@ -128,7 +128,7 @@ export function StarterApp({
           wallet signs its own transaction.
         </p>
       </section>
-      <section>
+      <section id="pay">
         <h2>Pay</h2>
         {enabled && !canPay && (
           <p>
@@ -194,7 +194,7 @@ export function StarterApp({
           start={workflow.start}
         />
       )}
-      <section>
+      <section id="activity">
         <h2>Live feed</h2>
         {activity.error && <p role="alert">{activity.error}</p>}
         {!enabled && <p>Live feed is disabled.</p>}
