@@ -57,6 +57,12 @@ function redistribute(goal: string, rows: Row[]): Row[] {
   return rows.map((r, i) => ({ ...r, share: targets.includes(i) ? parts[targets.indexOf(i)]! : "" }));
 }
 
+// Today's date as yyyy-mm-dd in the user's own time zone.
+function todayIso() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function formatDateDisplay(iso: string): string {
   if (!iso) return "mm / dd / yyyy";
   const [y, m, d] = iso.split("-");
@@ -130,7 +136,7 @@ export function LedgerModal({
     { email: "", share: "" },
     { email: "", share: "" },
   ]);
-  const [start, setStart] = useState("");
+  const [start, setStart] = useState(todayIso);
   const [deadline, setDeadline] = useState("");
   const [signature, setSignature] = useState("");
   const [signaturePhoto, setSignaturePhoto] = useState<string | null>(null);
@@ -138,8 +144,8 @@ export function LedgerModal({
 
   // Custom calendar state
   const [calTarget, setCalTarget] = useState<"start" | "deadline" | null>(null);
-  const [calYear, setCalYear] = useState(2026);
-  const [calMonth, setCalMonth] = useState(0); // Default to 2026-01 from Figma
+  const [calYear, setCalYear] = useState(() => new Date().getFullYear());
+  const [calMonth, setCalMonth] = useState(() => new Date().getMonth());
   const calRef = useRef<HTMLDivElement>(null);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,8 +207,8 @@ export function LedgerModal({
         setCalMonth(parseInt(m, 10) - 1);
       }
     } else {
-      setCalYear(2026);
-      setCalMonth(0);
+      setCalYear(new Date().getFullYear());
+      setCalMonth(new Date().getMonth());
     }
     setCalTarget(target);
   };
