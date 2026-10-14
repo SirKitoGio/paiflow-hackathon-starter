@@ -58,6 +58,12 @@
       "label": "Wallet",
       "publicKey": "GBLSWORVLUDQZSUZPBCIQRN262HSAAGYWMZYIHKGTDIYYWKKDUL7ROM7",
       "percentBps": 3200
+    },
+    {
+      "slot": 3,
+      "label": "Wallet",
+      "publicKey": "GDGV4SFD3PDMPOF53YXDIMNWFEWBAUWSVDMHVSOG5Z4F7S63CMUSB4CE",
+      "percentBps": 8700
     }
   ],
   "rounds": [
