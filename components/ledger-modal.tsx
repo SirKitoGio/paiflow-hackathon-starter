@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SignaturePad } from "./signature-pad";
 import "./ledger.css";
 
 export type LedgerData = {
@@ -226,6 +227,7 @@ export function LedgerModal({
   const [frequency, setFrequency] = useState<Frequency>("weekly");
   const [signature, setSignature] = useState("");
   const [signaturePhoto, setSignaturePhoto] = useState<string | null>(null);
+  const [padOpen, setPadOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Custom calendar state
@@ -328,7 +330,7 @@ export function LedgerModal({
             return;
           }
           if (!signature) {
-            fileInputRef.current?.click();
+            setPadOpen(true);
             return;
           }
           onCreate({
@@ -725,18 +727,18 @@ export function LedgerModal({
               </span>
               <div className="lgr-header-text">
                 <h2 className="lgr-title">Contract Signature</h2>
-                <p className="lgr-subtitle">Set a deadline goal</p>
+                <p className="lgr-subtitle">Sign with your finger, stylus or trackpad</p>
               </div>
             </div>
 
-            {/* E-Signature Photo Upload */}
+            {/* E-Signature: draw on the pad, or upload a photo */}
             <div
               className={`lgr-signature-box lgr-photo-box ${signaturePhoto ? "has-photo" : ""}`}
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => !signaturePhoto && setPadOpen(true)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
-              aria-label="Upload signature photo"
+              onKeyDown={(e) => e.key === "Enter" && !signaturePhoto && setPadOpen(true)}
+              aria-label="Add your e-signature"
             >
               <input
                 ref={fileInputRef}
@@ -749,7 +751,7 @@ export function LedgerModal({
               {signaturePhoto ? (
                 <div className="lgr-sig-preview-wrapper">
                   <img src={signaturePhoto} alt="E-signature preview" className="lgr-sig-preview-img" />
-                  <span className="lgr-sig-preview-name">Signature photo attached</span>
+                  <span className="lgr-sig-preview-name">Signature added</span>
                   <button
                     type="button"
                     className="lgr-sig-clear-btn"
@@ -759,7 +761,7 @@ export function LedgerModal({
                       setSignature("");
                       if (fileInputRef.current) fileInputRef.current.value = "";
                     }}
-                    aria-label="Remove signature photo"
+                    aria-label="Remove signature"
                   >
                     &times;
                   </button>
@@ -777,6 +779,21 @@ export function LedgerModal({
                 </>
               )}
             </div>
+
+            {padOpen && !signaturePhoto && (
+              <SignaturePad
+                onSave={(dataUrl) => {
+                  setSignaturePhoto(dataUrl);
+                  setSignature(dataUrl);
+                  setPadOpen(false);
+                }}
+                onUpload={() => {
+                  setPadOpen(false);
+                  fileInputRef.current?.click();
+                }}
+                onCancel={() => setPadOpen(false)}
+              />
+            )}
           </div>
 
           {/* FOOTER: Summary Bar & Save Button */}
