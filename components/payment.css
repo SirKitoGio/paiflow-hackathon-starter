@@ -1,0 +1,285 @@
+/* PAYMENTS — Review, Processing, Success, Pending, Failed and Receipt states (Figma) */
+
+.pay {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Sidebar: Wallet is the active item on this page */
+.pay .db-sidebar {
+  width: 67px;
+  left: 42px;
+  border-right: 4px solid #D58B00;
+  border-radius: 12px;
+}
+.pay .db-sidebar-btn { left: 11px; }
+.pay .db-btn-home { background: transparent; border-color: #D3EFC9; }
+.pay .pay-nav-active { background: #D3EFC9; border-color: #2B7B0E; }
+
+.pay-icon { flex: none; }
+
+/* Neutralise the starter's global element styles inside this page */
+.pay .pay-main, .pay .pay-overview { max-width: none; margin: 0; padding: 0; border: 0; }
+.pay .pay-overview { border-radius: 0; }
+.pay .pay-btn, .pay .pay-close { margin: 0; padding: 0; }
+.pay .pay-modal-header { flex-wrap: nowrap; }
+.pay a { overflow-wrap: normal; }
+
+/* Main container */
+.pay-main {
+  position: absolute;
+  width: 1279px;
+  height: 731px;
+  left: 142px;
+  top: 97px;
+  background: #176B45;
+  border-radius: 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 5;
+}
+.pay-main-receipt { background: linear-gradient(180deg, #A7F3D0 0%, #176B45 100%); }
+
+/* ── Group overview (left panel) ── */
+.pay-overview {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 360px;
+  background: #FAFFF5;
+}
+.pay-overview > * { position: absolute; left: 24px; width: 312px; box-sizing: border-box; }
+.pay-accent { left: 0 !important; top: 0; width: 360px !important; height: 4px; background: #176B45; }
+.pay-panel-divider { position: absolute; left: 360px; top: 0; width: 1px; height: 731px; background: #E5E7EB; }
+.pay-divider { height: 1px; background: #E5E7EB; }
+
+.pay-back {
+  top: 24px;
+  width: auto !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 16px;
+  color: #176B45;
+  text-decoration: none;
+}
+.pay-back:hover { text-decoration: underline; }
+
+.pay-group-heading { top: 64px; display: flex; flex-direction: column; gap: 4px; }
+.pay-overline { font-weight: 600; font-size: 11px; line-height: 13px; letter-spacing: 0.04em; color: #6B7280; }
+.pay-group-name { margin: 0; font-weight: 700; font-size: 22px; line-height: 27px; color: #0E241C; }
+.pay-badges { display: flex; gap: 8px; }
+
+.pay-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #D3EFC9;
+  color: #176B45;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+  white-space: nowrap;
+}
+.pay-badge-amber, .pay-badge-due, .pay-badge-pending { background: #FFFBEB; color: #92400E; }
+.pay-badge-red, .pay-badge-late { background: #FFF1F2; color: #C43D4B; }
+
+/* Contribution card */
+.pay-contribution-card {
+  top: 175px;
+  height: 130px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #176B45 0%, #1E9E63 100%);
+  overflow: hidden;
+}
+.pay-deco { position: absolute; border-radius: 50%; }
+.pay-deco-lg { width: 130px; height: 130px; left: 230px; top: -30px; background: rgba(255, 255, 255, 0.06); }
+.pay-deco-sm { width: 80px; height: 80px; left: 260px; top: 50px; background: rgba(255, 255, 255, 0.04); }
+.pay-amount-summary { position: absolute; left: 20px; top: 18px; width: 272px; display: flex; flex-direction: column; gap: 4px; }
+.pay-card-label { font-size: 11px; line-height: 13px; color: #A7F3D0; }
+.pay-card-amount { font-weight: 700; font-size: 34px; line-height: 41px; color: #FFFFFF; }
+.pay-due { display: flex; align-items: center; gap: 8px; font-size: 11px; line-height: 13px; color: #A7F3D0; }
+
+/* Round progress */
+.pay-progress { top: 324px; display: flex; flex-direction: column; gap: 10px; }
+.pay-progress-heading { display: flex; justify-content: space-between; }
+.pay-section-label { font-weight: 600; font-size: 12px; line-height: 15px; color: #374151; }
+.pay-progress-current { font-size: 12px; line-height: 15px; color: #6B7280; }
+.pay-track { position: relative; height: 8px; border-radius: 4px; background: #E5E7EB; }
+.pay-track-fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: #176B45; transition: width 0.4s ease; }
+.pay-markers { display: flex; justify-content: space-between; }
+.pay-marker { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; line-height: 12px; color: #9CA3AF; }
+.pay-marker i { width: 8px; height: 8px; border-radius: 50%; background: #D1D5DB; }
+.pay-marker-done { color: #176B45; }
+.pay-marker-done i { background: #176B45; }
+
+/* Members */
+.pay-members { top: 432px; display: flex; flex-direction: column; gap: 10px; }
+.pay-member-summary { display: flex; align-items: center; gap: 12px; }
+.pay-avatars { display: flex; padding-left: 8px; }
+.pay-avatar {
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  margin-left: -8px;
+  border: 2px solid #FFFFFF;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+.pay-avatar-more { background: #E5E7EB; color: #6B7280; font-weight: 400; }
+.pay-member-count { font-size: 11px; line-height: 13px; color: #6B7280; }
+
+.pay-contribute { top: 640px; }
+.pay-footnote { top: 700px; margin: 0; font-size: 11px; line-height: 13px; text-align: center; color: #9CA3AF; }
+
+/* ── Buttons ── */
+.pay-btn {
+  box-sizing: border-box;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.pay-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.pay-btn:not(:disabled):hover { transform: translateY(-1px); }
+.pay-btn:focus-visible { outline: 2px solid #1E9E63; outline-offset: 2px; }
+.pay-btn-primary {
+  background: #176B45;
+  border: 1px solid #176B45;
+  box-shadow: 0 4px 14px rgba(23, 107, 69, 0.2);
+  color: #FFFFFF;
+}
+.pay-btn-primary:not(:disabled):hover { box-shadow: 0 6px 18px rgba(23, 107, 69, 0.3); }
+.pay-btn-secondary { background: #FFFFFF; border: 1px solid #E5E7EB; color: #6B7280; }
+.pay-btn-secondary:not(:disabled):hover { border-color: #176B45; color: #176B45; }
+.pay-btn-full { width: 100%; }
+
+/* ── Payment modal ── */
+.pay-modal {
+  position: absolute;
+  left: 461px;
+  top: 52px;
+  width: 718px;
+  height: 654px;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+.pay-modal-accent { flex: none; height: 4px; background: #176B45; }
+.pay-modal-header { flex: none; height: 72px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.pay-heading { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pay-heading h2 { margin: 0; font-weight: 700; font-size: 20px; line-height: 24px; color: #0E241C; }
+.pay-heading p { margin: 0; font-size: 13px; line-height: 145%; color: #6B7280; }
+.pay-close {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: #F3F4F6;
+  color: #6B7280;
+  display: grid;
+  place-items: center;
+}
+.pay-close:hover { background: #E5E7EB; }
+.pay-header-divider { flex: none; height: 1px; background: #F3F4F6; }
+
+.pay-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 28px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pay-modal-footer { flex: none; padding: 8px 28px 16px; }
+.pay-actions { display: flex; gap: 12px; }
+.pay-actions > :first-child { width: 220px; flex: none; }
+.pay-actions > :last-child { flex: 1; }
+
+/* Contribution summary */
+.pay-summary { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; background: #F0FDF4; }
+.pay-group-symbol { flex: none; width: 36px; height: 36px; border-radius: 10px; background: #D3EFC9; color: #176B45; display: grid; place-items: center; }
+.pay-summary-details { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pay-summary-details strong { font-weight: 700; font-size: 13px; line-height: 16px; color: #0E241C; }
+.pay-summary-details span { font-size: 11px; line-height: 13px; color: #6B7280; }
+.pay-summary-amount { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.pay-summary-amount span { font-size: 11px; line-height: 13px; color: #6B7280; }
+.pay-summary-amount strong { font-weight: 700; font-size: 22px; line-height: 27px; color: #176B45; }
+
+/* Selected method */
+.pay-method { display: flex; align-items: center; justify-content: space-between; }
+.pay-method-info { display: flex; flex-direction: column; gap: 3px; }
+.pay-method-info span { font-size: 11px; line-height: 13px; color: #6B7280; }
+.pay-method-info strong { font-weight: 700; font-size: 14px; line-height: 17px; color: #0E241C; }
+
+/* Transaction details */
+.pay-details {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 16px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+}
+.pay-details hr { width: 100%; height: 1px; margin: 0; border: 0; background: #E5E7EB; }
+.pay-row { display: flex; align-items: center; gap: 16px; }
+.pay-row > :first-child { width: 160px; flex: none; font-size: 12px; line-height: 140%; color: #6B7280; }
+.pay-row > :last-child { flex: 1; text-align: right; font-weight: 500; font-size: 13px; line-height: 140%; color: #0E241C; }
+.pay-row-strong > :last-child { font-weight: 700; font-size: 16px; color: #176B45; }
+.pay-note { margin: 0; font-size: 11px; line-height: 145%; color: #6B7280; }
+.pay-tx { color: #176B45; text-decoration: none; font-variant-numeric: tabular-nums; }
+.pay-tx:hover { text-decoration: underline; }
+
+/* Guidance */
+.pay-guidance { flex: none; display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: 10px; }
+.pay-guidance .pay-icon { margin-top: 1px; }
+.pay-guidance strong { display: block; font-weight: 600; font-size: 12px; line-height: 145%; }
+.pay-guidance p { margin: 3px 0 0; font-size: 12px; line-height: 145%; }
+.pay-guidance-green { background: #F0FDF4; color: #176B45; }
+.pay-guidance-amber { background: #FFFBEB; color: #92400E; }
+.pay-guidance-red { background: #FFF1F2; color: #C43D4B; }
+
+/* Status heads (success / pending / failed) */
+.pay-status { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.pay-status-symbol { width: 64px; height: 64px; border-radius: 32px; display: grid; place-items: center; }
+.pay-status-green { background: #F0FDF4; color: #176B45; }
+.pay-status-red { background: #FFF1F2; color: #C43D4B; }
+.pay-status-title { margin: 0; font-weight: 700; font-size: 23px; line-height: 28px; color: #0E241C; }
+.pay-status-lead { margin: 0; font-size: 13px; line-height: 145%; color: #6B7280; }
+.pay-center { display: flex; justify-content: center; }
+
+/* Processing */
+.pay-processing { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 12px 0; text-align: center; }
+.pay-processing .pay-status-title { font-size: 24px; line-height: 29px; }
+.pay-processing .pay-status-lead { font-size: 14px; color: #0E241C; }
+.pay-status-desc { margin: 0; max-width: 520px; font-size: 13px; line-height: 145%; color: #6B7280; }
+.pay-spinner { position: relative; width: 72px; height: 72px; display: grid; place-items: center; color: #176B45; }
+.pay-spinner-track, .pay-spinner-arc { position: absolute; inset: 4px; border-radius: 50%; border: 4px solid #D3EFC9; }
+.pay-spinner-arc { border-color: #176B45 transparent transparent transparent; animation: pay-spin 0.9s linear infinite; }
+@keyframes pay-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .pay-spinner-arc { animation-duration: 3s; } }
+
+/* Receipt */
+.pay-receipt-heading { display: flex; align-items: center; justify-content: space-between; }
+.pay-receipt-heading > div { display: flex; flex-direction: column; gap: 3px; }
+.pay-receipt-label { font-weight: 600; font-size: 11px; line-height: 13px; letter-spacing: 0.04em; color: #6B7280; }
+.pay-receipt-total { font-weight: 700; font-size: 30px; line-height: 36px; color: #176B45; }

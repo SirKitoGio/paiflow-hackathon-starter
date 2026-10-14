@@ -49,12 +49,10 @@
 .lp-photo {
   position: absolute;
   right: 0;
-  top: -46px;
+  top: 0;
   width: 893px;
-  height: 1116px;
+  height: auto;
   max-width: 62%;
-  object-fit: cover;
-  object-position: left top;
 }
 .lp-nav {
   position: absolute;

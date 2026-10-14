@@ -1,10 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { fromStroops } from "@/lib/amount";
+import { browserRequest } from "@/lib/browser-api";
 import "./dashboard.css";
 
+type GroupSummary = {
+  name: string;
+  contributionStroops: string;
+  activeRound: number | null;
+  members: { id: string }[];
+  rounds: { index: number; deadline: string; members: Record<string, string> }[];
+};
+
 export function Dashboard() {
+  const router = useRouter();
+  const [group, setGroup] = useState<GroupSummary | null>(null);
+  const [groupError, setGroupError] = useState(false);
+
+  useEffect(() => {
+    browserRequest<GroupSummary>("/api/tranche/group").then(setGroup, () => setGroupError(true));
+  }, []);
+
+  const round = group?.rounds.find((r) => r.index === group.activeRound);
+  const paidCount = round ? Object.values(round.members).filter((s) => s === "paid").length : 0;
   const [activeTab, setActiveTab] = useState<"home" | "wallet" | "create" | "user">("home");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newPoolName, setNewPoolName] = useState("");
@@ -71,8 +92,8 @@ export function Dashboard() {
         <button
           type="button"
           className={`db-sidebar-btn db-btn-wallet ${activeTab === "wallet" ? "db-btn-active" : ""}`}
-          onClick={() => setActiveTab("wallet")}
-          aria-label="Wallet"
+          onClick={() => router.push("/pay")}
+          aria-label="Payments"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <rect x="2" y="5" width="20" height="14" rx="3" stroke="#A8D070" strokeWidth="2" fill="none" />
@@ -130,6 +151,24 @@ export function Dashboard() {
         >
           <span>Create Paluwagan</span>
         </button>
+
+        {/* Live group from the Tranche backend */}
+        <Link href="/pay" className="db-card-group" aria-label={group ? `Open ${group.name}` : "Open group"}>
+          <span className="db-group-overline">PALUWAGAN GROUP</span>
+          <strong className="db-group-name">{group?.name ?? (groupError ? "Group unavailable" : "Loading…")}</strong>
+          {group && (
+            <>
+              <span className="db-group-amount">{fromStroops(group.contributionStroops)} XLM</span>
+              <span className="db-group-meta">per member, per round</span>
+              <span className="db-group-meta">
+                {round
+                  ? `Round ${round.index} of ${group.rounds.length} · ${paidCount}/${group.members.length} paid`
+                  : "No open round"}
+              </span>
+              <span className="db-group-cta">Pay contribution →</span>
+            </>
+          )}
+        </Link>
 
         {/* Frame 28: Add Paluwagan Card */}
         <div

@@ -19,26 +19,14 @@ afterEach(() => {
 });
 async function screen() {
   const { default: Page } = await import("@/app/page");
-  return renderToStaticMarkup(await Page());
+  return renderToStaticMarkup(Page());
 }
-it("keeps checkout as the default while discovery precedes runnable payments", async () => {
-  const html = await screen();
-  expect(html).toContain("<h2>Pay</h2>");
-  expect(html).toContain("<h2>Live feed</h2>");
-  expect(html).toContain("Checking deployment capabilities");
-  expect(html).not.toContain("Per-payment recipient");
-  expect(html).not.toContain(token);
-  expect(fetchMock).not.toHaveBeenCalled();
-});
-it.each(["prepare", "demo", "invalid"])("server render preserves %s guards and performs no upstream calls", async mode => {
+it.each(["team", "prepare", "demo", "invalid"])("home page shows the Tranche hero without the starter checkout (%s)", async mode => {
   vi.stubEnv("PAIFLOW_MODE", mode);
   const html = await screen();
-  expect(html).not.toContain("Per-payment recipient");
+  expect(html).toContain("Tranche");
+  expect(html).not.toContain("<h2>Pay</h2>");
+  expect(html).not.toContain("Live feed");
   expect(html).not.toContain(token);
   expect(fetchMock).not.toHaveBeenCalled();
-  if (mode === "prepare") {
-    expect(html).toContain("Preparation mode");
-    expect(html).toContain("Live feed is disabled");
-  }
-  if (mode === "invalid") expect(html).toContain("Payments unavailable");
 });

@@ -142,6 +142,9 @@
   border-radius: 24px;
   overflow: hidden;
   z-index: 5;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* Frame 43: Create Paluwagan Top Right Button */
@@ -219,6 +222,38 @@
 .db-card-create:hover .db-create-circle {
   transform: scale(1.06);
 }
+
+/* Live group card (same footprint as the Add Paluwagan card) */
+.db-card-group {
+  box-sizing: border-box;
+  position: absolute;
+  width: 164.22px;
+  height: 269px;
+  left: 225px;
+  top: 80px;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(180deg, #176B45 0%, #1E9E63 100%);
+  border-radius: 17.8343px;
+  color: #FFFFFF;
+  text-decoration: none;
+  overflow-wrap: normal;
+  font-family: 'Inter', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.db-card-group:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(23, 107, 69, 0.3);
+}
+
+.db-group-overline { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: #A7F3D0; }
+.db-group-name { font-size: 16px; line-height: 20px; font-weight: 700; }
+.db-group-amount { margin-top: auto; font-size: 24px; font-weight: 700; }
+.db-group-meta { font-size: 11px; line-height: 14px; color: #A7F3D0; }
+.db-group-cta { margin-top: 12px; font-size: 12px; font-weight: 600; }
 
 /* Modal Styling */
 .db-modal-overlay {
