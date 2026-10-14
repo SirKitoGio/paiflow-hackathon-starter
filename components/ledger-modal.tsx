@@ -10,7 +10,7 @@ export type LedgerData = {
   start: string;
   deadline: string;
   frequency: string;
-  /** Number of payments each member makes (one per round). */
+  /** Number of payments each member makes between the start date and the deadline. */
   payments: number;
   /** What each member pays per payment, as display text (e.g. "₱166,666.67 (last ₱166,666.66)"); empty if shares differ. */
   perPayment: string;
@@ -74,30 +74,33 @@ const isoOf = (y: number, m: number, d: number) =>
   `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 const daysIn = (y: number, m: number) => new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
 
-/** One payment date per round, from the start date. Plain calendar math, no time zones. */
-function paymentDates(start: string, frequency: Frequency, count: number): string[] {
+const MAX_PAYMENTS = 1000;
+
+/** Every payment date from the start date through the deadline. Plain calendar math, no time zones. */
+function paymentDates(start: string, end: string, frequency: Frequency): string[] {
   const [y, m, d] = start.split("-").map(Number);
-  if (!y || !m || !d || count < 1) return [];
+  if (!y || !m || !d || !end || end < start) return [];
   const dates: string[] = [];
+  const add = (iso: string) => {
+    if (iso >= start && iso <= end && dates.length < MAX_PAYMENTS) dates.push(iso);
+    return iso <= end && dates.length < MAX_PAYMENTS;
+  };
   if (frequency === "daily" || frequency === "weekly") {
     const step = frequency === "daily" ? 1 : 7;
-    for (let k = 0; k < count; k++) {
+    for (let k = 0; ; k++) {
       const t = new Date(Date.UTC(y, m - 1, d + k * step));
-      dates.push(isoOf(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()));
+      if (!add(isoOf(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()))) break;
     }
   } else if (frequency === "monthly") {
-    for (let k = 0; k < count; k++) {
+    for (let k = 0; ; k++) {
       const yy = y + Math.floor((m - 1 + k) / 12);
       const mm = (m - 1 + k) % 12;
-      dates.push(isoOf(yy, mm, Math.min(d, daysIn(yy, mm))));
+      if (!add(isoOf(yy, mm, Math.min(d, daysIn(yy, mm))))) break;
     }
   } else {
     // The 15th and the 30th (or the month's last day), on or after the start date.
-    for (let yy = y, mm = m - 1; dates.length < count; mm === 11 ? (yy++, (mm = 0)) : mm++)
-      for (const day of [15, Math.min(30, daysIn(yy, mm))]) {
-        const iso = isoOf(yy, mm, day);
-        if (iso >= start && dates.length < count) dates.push(iso);
-      }
+    month: for (let yy = y, mm = m - 1; ; mm === 11 ? (yy++, (mm = 0)) : mm++)
+      for (const day of [15, Math.min(30, daysIn(yy, mm))]) if (!add(isoOf(yy, mm, day))) break month;
   }
   return dates;
 }
@@ -110,7 +113,7 @@ const pesoText = (centavos: bigint) => {
 
 /**
  * Each member's share spread over their payments so the payments add up exactly:
- * leftover centavos go on the earlier payments, so only the last one can be a centavo lower.
+ * every payment is rounded up to the centavo and the last one takes the difference.
  */
 function installmentText(share: bigint, payments: number) {
   const n = BigInt(payments);
@@ -135,6 +138,14 @@ const shortDate = (iso: string) => {
 function todayIso() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// Default deadline: the same day three months on (one month per default recipient).
+function defaultDeadline() {
+  const d = new Date();
+  const y = d.getFullYear() + Math.floor((d.getMonth() + 3) / 12);
+  const m = (d.getMonth() + 3) % 12;
+  return isoOf(y, m, Math.min(d.getDate(), daysIn(y, m)));
 }
 
 function formatDateDisplay(iso: string): string {
@@ -211,7 +222,7 @@ export function LedgerModal({
     { email: "", share: "" },
   ]);
   const [start, setStart] = useState(todayIso);
-  const [deadline, setDeadline] = useState("");
+  const [deadline, setDeadline] = useState(defaultDeadline);
   const [frequency, setFrequency] = useState<Frequency>("weekly");
   const [signature, setSignature] = useState("");
   const [signaturePhoto, setSignaturePhoto] = useState<string | null>(null);
@@ -273,15 +284,15 @@ export function LedgerModal({
   const filled = rows.filter((r) => r.email.trim());
   const pct = distributionPct(goal, filled);
 
-  // One round per recipient: the schedule sets the deadline to the last payment date.
-  const schedule = paymentDates(start, frequency, filled.length || rows.length);
+  // The frequency decides how many payments fit between the start date and the deadline;
+  // each member's share is spread over those payments.
+  const schedule = paymentDates(start, deadline, frequency);
   const lastPayment = schedule[schedule.length - 1];
   const payers = filled.length ? filled : rows;
-  const perPayment = perPaymentTexts(payers.map((r) => r.share), schedule.length);
+  // Past the cap the list is cut short, so an amount per payment would be wrong; show none.
+  const perPayment =
+    schedule.length < MAX_PAYMENTS ? perPaymentTexts(payers.map((r) => r.share), schedule.length) : null;
   const samePerPayment = perPayment?.every((t) => t === perPayment[0]) ? perPayment[0] : undefined;
-  useEffect(() => {
-    if (lastPayment) setDeadline(lastPayment);
-  }, [lastPayment]);
 
   const openCalendar = (target: "start" | "deadline") => {
     const activeDate = target === "start" ? start : deadline;
@@ -571,9 +582,13 @@ export function LedgerModal({
                   ))}
                 </select>
               </label>
+              {schedule.length === 0 && (
+                <p className="lgr-schedule">Pick a deadline to see the payment schedule.</p>
+              )}
               {schedule.length > 0 && (
                 <p className="lgr-schedule">
-                  {schedule.length} payments:{" "}
+                  {schedule.length === MAX_PAYMENTS ? `${MAX_PAYMENTS}+` : schedule.length}{" "}
+                  {schedule.length === 1 ? "payment" : "payments"}:{" "}
                   {schedule.length <= 6
                     ? schedule.map(shortDate).join(" · ")
                     : `${schedule.slice(0, 4).map(shortDate).join(" · ")} … ${shortDate(lastPayment!)}`}
@@ -663,7 +678,10 @@ export function LedgerModal({
                         onClick={() => {
                           if (calTarget === "start") {
                             setStart(d.iso);
-                            setCalTarget(null);
+                            if (deadline && d.iso > deadline) {
+                              setDeadline(d.iso);
+                            }
+                            setCalTarget("deadline");
                           } else {
                             if (start && d.iso < start) {
                               setStart(d.iso);
