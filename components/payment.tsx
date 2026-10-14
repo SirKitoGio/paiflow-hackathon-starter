@@ -384,11 +384,6 @@ export function Payment() {
             <path d="M12 6v12M6 12h12" stroke="#A8D070" strokeWidth="2.4" strokeLinecap="round" />
           </svg>
         </Link>
-        <div className="db-sidebar-arrow" aria-hidden="true">
-          <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
-            <path d="M2 1.5l5.5 6-5.5 6M9.5 1.5l5.5 6-5.5 6" stroke="#CA8A04" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
         <button type="button" className="db-sidebar-btn db-btn-user" aria-label={address ? `Wallet ${short(address)}` : "Connect wallet"} onClick={connect}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="8" r="4" stroke="#A8D070" strokeWidth="2" />

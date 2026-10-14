@@ -176,9 +176,6 @@ export function GroupDashboard() {
               <img src="/images/tranche/icon-plus.png" alt="" />
             </button>
           </div>
-          <button type="button" className="gd-sidebar__expand" aria-label="Expand sidebar">
-            <Icon name="chevrons" />
-          </button>
           <button type="button" className="gd-sidebar__btn gd-sidebar__profile" aria-label="Profile">
             <Icon name="user" />
           </button>

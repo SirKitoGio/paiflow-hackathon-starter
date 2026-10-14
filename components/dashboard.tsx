@@ -206,19 +206,6 @@ export function Dashboard() {
           </svg>
         </button>
 
-        {/* Double Right Arrow */}
-        <div className="db-sidebar-arrow" aria-hidden="true">
-          <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
-            <path
-              d="M2 1.5l5.5 6-5.5 6M9.5 1.5l5.5 6-5.5 6"
-              stroke="#CA8A04"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-
         {/* Frame 26: User Profile */}
         <button
           type="button"
