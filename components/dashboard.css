@@ -1,15 +1,15 @@
-/* DASHBOARD STYLING - PIXEL ACCURATE TO FIGMA SPEC & REFERENCE IMAGE */
+/* DASHBOARD STYLING - TRANCHE REVISED SPEC */
 
 .db {
   position: relative;
-  width: 1480px;
-  height: 1024px;
-  min-height: 1024px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
   background: linear-gradient(180deg, #E1EDA0 0%, #FFFFFF 100%);
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #0E241C;
-  overflow: hidden;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -62,8 +62,12 @@
 .db-sidebar {
   box-sizing: border-box;
   position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
   width: 72.56px;
   height: 552px;
+  max-height: calc(100% - 136px);
   left: 39px;
   top: 97px;
   background: #FFFFFF;
@@ -133,68 +137,360 @@
 .db-main-card {
   box-sizing: border-box;
   position: absolute;
-  width: 1279px;
-  height: 852px;
+  max-width: none;
+  margin: 0;
+  border: 0;
   left: 142px;
+  right: 39px;
   top: 97px;
+  bottom: 39px;
+  min-height: calc(100vh - 136px);
   background: #FFFFFF;
   box-shadow: 0px 4px 32px rgba(0, 0, 0, 0.25);
   border-radius: 24px;
-  overflow: hidden;
+  overflow: auto;
   z-index: 5;
-  max-width: none;
-  margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Frame 43: Create Paluwagan Top Right Button */
-.db-create-paluwagan-btn {
+/* Top Header Row inside Frame 27 */
+.db-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 80px;
+  flex: none;
   box-sizing: border-box;
-  position: absolute;
-  width: 183.23px;
-  height: 33.52px;
-  left: 1066px;
-  top: 24px;
-  border: 1px solid #2B7B0E;
-  border-radius: 13.4074px;
-  background: transparent;
+  padding: 0 32px;
+  background: #FAFFF7;
+}
+
+/* Left Greeting */
+.db-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.db-greeting-title {
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0E241C;
+  line-height: 33px;
+}
+
+.db-greeting-sub {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 16px;
+  color: #6B7280;
+  font-weight: 400;
+}
+
+/* Right Header Controls */
+.db-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.db-date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #EAF7E5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #176B45;
+}
+
+.db-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #EAF7E5;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
+  padding: 0;
 }
 
-.db-create-paluwagan-btn:hover {
-  background: #F5F9F3;
+.db-icon-btn:hover {
+  background: #e2f1d9;
+  transform: scale(1.05);
+}
+
+.db-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #C04687;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* + Create Paluwagan Magenta Button */
+.db-btn-create-paluwagan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 10px 20px;
+  background: #B54880;
+  color: #E1EDA0;
+  border: none;
+  border-radius: 12px;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(23, 107, 69, 0.25);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.db-btn-create-paluwagan:hover {
   transform: translateY(-1px);
+  opacity: 0.95;
 }
 
-.db-create-paluwagan-btn span {
-  font-family: 'Inter', sans-serif;
+/* Paluwagan Cards Grid/Row Container inside Main Card */
+.db-cards-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 28px;
+  padding: 38px 39px;
+  flex-wrap: wrap;
+}
+
+/* Card */
+.db-purpose-card {
+  box-sizing: border-box;
+  position: relative;
+  width: 262px;
+  height: 390px;
+  background: #D3EFC9;
+  border-radius: 12.838px;
+  overflow: hidden;
+  flex: none;
+  box-shadow: 0px 4px 18px rgba(14, 36, 28, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.db-purpose-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 26px rgba(14, 36, 28, 0.16);
+}
+
+/* Card content */
+.db-card-content {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0.05px;
+}
+
+/* Ellipse 3 */
+.db-card-illu-glow {
+  position: absolute;
+  width: 94.35px;
+  height: 94.35px;
+  left: 83.41px;
+  top: 40.28px;
+  background: #B54880;
+  filter: blur(24.4929px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* image 14 */
+.db-card-illu-img {
+  position: absolute;
+  width: 107.11px;
+  height: 104.16px;
+  left: 77px;
+  top: 35px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Card text */
+.db-card-text {
+  position: absolute;
+  height: 93.26px;
+  left: 22px;
+  right: 22.93px;
+  top: 178px;
+}
+
+/* Card title */
+.db-card-title {
+  margin: 0;
+  position: absolute;
+  height: 30px;
+  left: 0px;
+  right: 0px;
+  top: 19.63px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 28.8855px;
+  line-height: 104%;
+  color: #0E241C;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Card description */
+.db-card-desc-1 {
+  margin: 0;
+  position: absolute;
+  height: 17px;
+  left: 0px;
+  right: 0px;
+  top: 59.26px;
+  font-family: 'Inter', system-ui, sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 12.3262px;
-  line-height: 84.98%;
-  text-align: center;
-  letter-spacing: -0.02em;
-  color: #000000;
+  font-size: 11.2332px;
+  line-height: 150%;
+  color: #0E241C;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Card description */
+.db-card-desc-2 {
+  margin: 0;
+  position: absolute;
+  height: 17px;
+  left: 1px;
+  right: -1px;
+  top: 76px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11.2332px;
+  line-height: 150%;
+  color: #0E241C;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Product action */
+.db-card-action {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px;
+  position: absolute;
+  height: 38.51px;
+  left: 22.47px;
+  right: 22.47px;
+  top: 328.97px;
+}
+
+/* Product price */
+.db-card-price {
+  width: 116px;
+  height: 15px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #0E241C;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Button */
+.db-card-btn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 19.257px;
+  gap: 19.26px;
+  width: 65.51px;
+  height: 38.51px;
+  border: 0.802374px solid #0E241C;
+  border-radius: 80.2374px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.db-card-btn:hover {
+  background: #0E241C;
+}
+
+.db-card-btn:hover .db-card-btn-label {
+  color: #D3EFC9;
+}
+
+/* Button label */
+.db-card-btn-label {
+  width: 27px;
+  height: 14px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 11.2332px;
+  line-height: 14px;
+  color: #0E241C;
+  transition: color 0.15s ease;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
 
 /* Frame 28: Add Paluwagan Card */
 .db-card-create {
   box-sizing: border-box;
-  position: absolute;
   width: 164.22px;
   height: 269px;
-  left: 37px;
-  top: 80px;
   background: linear-gradient(180deg, #D3EFC9 0%, #F5F9F3 100%);
   border: 1.48619px solid #D3EFC9;
   border-radius: 17.8343px;
+  position: relative;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   user-select: none;
+  flex: none;
 }
 
 .db-card-create:hover {
@@ -223,37 +519,217 @@
   transform: scale(1.06);
 }
 
-/* Live group card (same footprint as the Add Paluwagan card) */
-.db-card-group {
+/* View Paluwagan Detail Modal */
+.db-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 36, 28, 0.45);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.db-detail-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  width: min(520px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
   box-sizing: border-box;
-  position: absolute;
-  width: 164.22px;
-  height: 269px;
-  left: 225px;
-  top: 80px;
-  padding: 18px 14px;
+  position: relative;
+  border: 1px solid #D3EFC9;
+}
+
+.db-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.db-detail-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.db-detail-logo-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #D3EFC9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.db-detail-title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #0E241C;
+}
+
+.db-detail-badge {
+  display: inline-block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  background: #EAF7E5;
+  color: #176B45;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.db-detail-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748B;
+  padding: 0 4px;
+}
+
+.db-detail-close:hover {
+  color: #0E241C;
+}
+
+.db-detail-section {
+  background: #FAFFF7;
+  border: 1px solid #E1EDA0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.db-detail-section-title {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748B;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.db-detail-goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.db-detail-goal-val {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #0E241C;
+}
+
+.db-detail-dates-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.db-detail-date-box {
+  background: #FFFFFF;
+  border: 1px solid #D3EFC9;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.db-detail-date-label {
+  font-size: 11px;
+  color: #64748B;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.db-detail-date-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0E241C;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin-top: 2px;
+}
+
+.db-detail-recipients-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  background: linear-gradient(180deg, #176B45 0%, #1E9E63 100%);
-  border-radius: 17.8343px;
-  color: #FFFFFF;
+  gap: 8px;
+}
+
+.db-detail-recipient-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.db-detail-recipient-email {
+  color: #1E293B;
+  font-weight: 500;
+}
+
+.db-detail-recipient-share {
+  color: #176B45;
+  font-weight: 600;
+}
+
+.db-detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.db-detail-btn-action {
+  flex: 1;
+  padding: 12px 20px;
+  background: #B54880;
+  color: #E1EDA0;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  text-align: center;
   text-decoration: none;
-  overflow-wrap: normal;
-  font-family: 'Inter', sans-serif;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
-.db-card-group:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(23, 107, 69, 0.3);
+.db-detail-btn-action:hover {
+  opacity: 0.92;
 }
 
-.db-group-overline { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: #A7F3D0; }
-.db-group-name { font-size: 16px; line-height: 20px; font-weight: 700; }
-.db-group-amount { margin-top: auto; font-size: 24px; font-weight: 700; }
-.db-group-meta { font-size: 11px; line-height: 14px; color: #A7F3D0; }
-.db-group-cta { margin-top: 12px; font-size: 12px; font-weight: 600; }
+.db-detail-btn-secondary {
+  padding: 12px 20px;
+  background: #FFFFFF;
+  color: #0E241C;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.db-detail-btn-secondary:hover {
+  background: #F8FAFC;
+}
 
 /* Modal Styling */
 .db-modal-overlay {
@@ -369,11 +845,38 @@
 }
 
 /* Responsive container adaptation */
-@media (max-width: 1480px) {
-  .db {
-    width: 100vw;
+@media (max-width: 900px) {
+  .db-sidebar {
+    position: relative;
+    left: 20px;
+    top: 90px;
+    width: calc(100% - 40px);
     height: auto;
-    min-height: 100vh;
-    overflow-x: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 12px;
+    border-right: none;
+    border-bottom: 2.85px solid #CA8A04;
+  }
+  .db-sidebar-btn {
+    position: relative;
+    left: 0;
+    top: 0;
+  }
+  .db-sidebar-arrow {
+    display: none;
+  }
+  .db-main-card {
+    position: relative;
+    left: 20px;
+    right: 20px;
+    top: 110px;
+    margin-bottom: 40px;
+    min-height: auto;
   }
 }
+
+/* Live group card: same card, marked as live, link styled as the View button */
+.db-purpose-card-live { outline: 2px solid #176B45; outline-offset: -2px; }
+.db-purpose-card-live .db-card-btn { text-decoration: none; color: #0E241C; overflow-wrap: normal; }

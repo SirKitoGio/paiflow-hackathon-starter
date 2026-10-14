@@ -1,0 +1,732 @@
+.lg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow-y: auto;
+  background: rgba(14, 36, 28, 0.45);
+  backdrop-filter: blur(4px);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+.lgr {
+  position: relative;
+  box-sizing: border-box;
+  width: min(785px, 100%);
+  max-height: 94vh;
+  margin: auto;
+  padding: 24px 28px 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #E9F6E4;
+  border-radius: 20px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25);
+  color: #3D4C2A;
+}
+
+/* Background ellipses from Figma */
+.lgr-circle {
+  position: absolute;
+  width: 273px;
+  height: 273px;
+  border-radius: 50%;
+  background: #DEF3D3;
+  pointer-events: none;
+}
+.lgr-c1 {
+  right: -30px;
+  top: 15px;
+}
+.lgr-c2 {
+  left: -40px;
+  top: -45px;
+}
+
+/* Close button */
+.lgr-close {
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  z-index: 20;
+  background: none;
+  border: 0;
+  font-size: 28px;
+  line-height: 1;
+  color: #3D4C2A;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: opacity 0.15s;
+}
+.lgr-close:hover {
+  opacity: 0.7;
+}
+
+/* TOP SECTION: Total Shared Savings */
+.lgr-top {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 18px;
+  min-height: 110px;
+}
+
+.lgr-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.lgr-badge {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  background: rgba(181, 72, 128, 0.57);
+  box-shadow: 0 3px 3px rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+}
+
+.lgr-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lgr-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #89A269 0%, #141D08 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lgr-subtitle {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #7B8089;
+  letter-spacing: -0.01em;
+}
+
+/* Purpose input box (top section) */
+.lgr-purpose-box {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  max-width: 440px;
+  height: 46px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  gap: 12px;
+}
+
+/* Goal input box (panel section) */
+.lgr-goal-box {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 46px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+.lgr-jar-img {
+  position: absolute;
+  right: 16px;
+  top: 10px;
+  width: 267px;
+  height: 178px;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lgr-v-divider {
+  width: 1px;
+  height: 22px;
+  background: #D1D5DB;
+  margin: 0 10px;
+}
+
+.lgr-peso-sign {
+  font-size: 15px;
+  font-weight: 700;
+  color: #22C55E;
+  margin-left: auto;
+}
+
+.lgr-input-icon-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lgr-input-field {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #2A3A1C;
+  font-family: inherit;
+}
+.lgr-input-field::placeholder {
+  color: #94A3B8;
+}
+
+/* INNER PANEL: Frame 37 */
+.lgr-panel {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, #E3EEA5 0%, #FFFFFF 100%);
+  border: 1px solid #FFFFFF;
+  border-radius: 18.8px;
+  padding: 22px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.lgr-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Purpose Full Box */
+.lgr-full-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 46px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  gap: 12px;
+}
+
+/* Recipients List */
+.lgr-recipients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lgr-recipient-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.lgr-email-box {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+.lgr-share-box {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+/* Add recipient button row */
+.lgr-add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.lgr-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 38px;
+  background: #E0FFE6;
+  border: 1.5px dashed #22C55E;
+  border-radius: 12px;
+  padding: 0 16px;
+  cursor: pointer;
+  color: #4C5D36;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.lgr-add-btn:hover {
+  background: #D2F7DB;
+}
+
+.lgr-add-plus {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4C5D36;
+  color: #FFFFFF;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Contract Date Section */
+.lgr-contract-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lgr-date-inputs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 440px;
+}
+
+.lgr-date-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  gap: 4px;
+  user-select: none;
+  transition: box-shadow 0.15s;
+}
+
+.lgr-date-field:hover,
+.lgr-date-field.is-focused {
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.lgr-date-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #7B8089;
+  white-space: nowrap;
+}
+
+.lgr-date-val {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1F2429;
+  white-space: nowrap;
+}
+
+.lgr-date-val.is-placeholder {
+  color: #9EA6B0;
+  font-weight: 400;
+}
+
+.lgr-date-ico {
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+/* Custom 2026 Calendar Popover (Figma Spec) */
+.lgr-cal-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 60;
+  box-sizing: border-box;
+  width: 276px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
+  border: 1px solid #E6E8ED;
+  padding: 12px;
+}
+
+.lgr-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  margin-bottom: 2px;
+}
+
+.lgr-cal-title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 19px;
+  color: #1F2429;
+}
+
+.lgr-cal-navs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lgr-cal-nav-btn {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: #F3F4F6;
+  border-radius: 6px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  color: #1F2429;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.12s;
+}
+.lgr-cal-nav-btn:hover {
+  background: #E5E7EB;
+}
+
+.lgr-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 36px);
+  gap: 0;
+  margin-top: 4px;
+}
+
+.lgr-cal-weekday {
+  width: 36px;
+  height: 22px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #9EA6B0;
+}
+
+.lgr-cal-weekday.is-weekend {
+  color: #E03131;
+}
+
+.lgr-cal-divider {
+  width: 252px;
+  height: 1px;
+  background: #E6E8ED;
+  margin: 2px 0 4px;
+}
+
+.lgr-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 36px);
+  gap: 0;
+}
+
+.lgr-cal-day {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #1F2429;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  transition: background 0.12s, color 0.12s;
+}
+
+.lgr-cal-day.is-weekend {
+  color: #E03131;
+}
+
+.lgr-cal-day.is-other-month {
+  color: #9EA6B0;
+  opacity: 0.55;
+}
+
+.lgr-cal-day:hover {
+  background: #D3EFC9;
+  color: #1F2429;
+}
+
+.lgr-cal-day.is-selected {
+  background: #16A34A !important;
+  color: #FFFFFF !important;
+  font-weight: 600;
+  opacity: 1 !important;
+}
+
+.lgr-cal-day.is-in-range {
+  background: #E0FFE6;
+  border-radius: 0;
+}
+
+.lgr-cal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #E6E8ED;
+  font-size: 11px;
+  color: #7B8089;
+}
+
+.lgr-cal-status b {
+  color: #16A34A;
+}
+
+.lgr-cal-close-btn {
+  background: #16A34A;
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.lgr-cal-close-btn:hover {
+  background: #15803D;
+}
+
+.lgr-signature-box {
+  display: flex;
+  align-items: center;
+  max-width: 380px;
+  height: 44px;
+  background: #FFFFFF;
+  border: 1.5px solid #22C55E;
+  border-radius: 12px;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+.lgr-photo-box {
+  cursor: pointer;
+  justify-content: space-between;
+  user-select: none;
+  transition: all 0.15s;
+}
+
+.lgr-photo-box:hover {
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+  background: #FAFEF8;
+}
+
+.lgr-sig-placeholder {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #94A3B8;
+  font-family: inherit;
+}
+
+.lgr-sig-preview-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.lgr-sig-preview-img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  background: #F1F5F9;
+  border-radius: 6px;
+  border: 1px solid #E2E8F0;
+}
+
+.lgr-sig-preview-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #16A34A;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lgr-sig-clear-btn {
+  background: #F1F5F9;
+  border: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #64748B;
+  font-size: 16px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.lgr-sig-clear-btn:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+}
+
+.lgr-sig-ico {
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+/* Footer: Summary pill & Action button */
+.lgr-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.lgr-summary-pill {
+  flex: 1;
+  min-height: 48px;
+  background: #16A34A;
+  border-radius: 14px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.lgr-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lgr-summary-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lgr-summary-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.lgr-summary-sub {
+  font-size: 9.5px;
+  font-weight: 500;
+  color: #E1EDA0;
+}
+
+.lgr-summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+
+.lgr-summary-valid {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.lgr-summary-dates {
+  font-size: 9.5px;
+  font-weight: 500;
+  color: #E1EDA0;
+}
+
+.lgr-submit-btn {
+  background: #B54880;
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 9999px;
+  height: 44px;
+  padding: 0 24px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.lgr-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(181, 72, 128, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 680px) {
+  .lgr-recipient-row {
+    grid-template-columns: 1fr;
+  }
+  .lgr-add-row {
+    grid-template-columns: 1fr;
+  }
+  .lgr-date-inputs-row {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .lgr-signature-box {
+    max-width: 100%;
+  }
+  .lgr-footer-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .lgr-jar-img {
+    display: none;
+  }
+  .lgr-purpose-box,
+  .lgr-goal-box {
+    max-width: 100%;
+  }
+}
