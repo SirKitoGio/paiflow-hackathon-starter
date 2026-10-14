@@ -34,6 +34,29 @@ function distributionPct(goal: string, rows: Row[]): string {
   return ((sum * 100n) / g).toString();
 }
 
+// Splits the goal evenly in whole centavos; leftover centavos go to the first shares.
+function splitEvenly(goal: string, count: number): string[] | null {
+  const total = toCentavos(goal);
+  if (total === null || count === 0) return null;
+  const n = BigInt(count);
+  return Array.from({ length: count }, (_, i) => {
+    const v = total / n + (BigInt(i) < total % n ? 1n : 0n);
+    const cents = v % 100n;
+    return cents ? `${v / 100n}.${cents.toString().padStart(2, "0")}` : `${v / 100n}`;
+  });
+}
+
+/** Divides the goal among rows with an email (or all rows if none has one yet). */
+function redistribute(goal: string, rows: Row[]): Row[] {
+  const targets = rows.some((r) => r.email.trim())
+    ? rows.flatMap((r, i) => (r.email.trim() ? [i] : []))
+    : rows.map((_, i) => i);
+  if (!goal.trim()) return rows.map((r) => ({ ...r, share: "" }));
+  const parts = splitEvenly(goal, targets.length);
+  if (!parts) return rows; // Not a valid amount yet: leave the shares as they are.
+  return rows.map((r, i) => ({ ...r, share: targets.includes(i) ? parts[targets.indexOf(i)]! : "" }));
+}
+
 function formatDateDisplay(iso: string): string {
   if (!iso) return "mm / dd / yyyy";
   const [y, m, d] = iso.split("-");
@@ -153,6 +176,18 @@ export function LedgerModal({
 
   const setRow = (i: number, patch: Partial<Row>) =>
     setRows((r) => r.map((x, j) => (j === i ? { ...x, ...patch } : x)));
+
+  const changeGoal = (value: string) => {
+    setGoal(value);
+    setRows((r) => redistribute(value, r));
+  };
+
+  // Re-split when a recipient's email goes from empty to filled or back.
+  const changeEmail = (i: number, email: string) =>
+    setRows((r) => {
+      const next = r.map((x, j) => (j === i ? { ...x, email } : x));
+      return !!r[i]?.email.trim() !== !!email.trim() ? redistribute(goal, next) : next;
+    });
 
   const filled = rows.filter((r) => r.email.trim());
   const pct = distributionPct(goal, filled);
@@ -283,7 +318,7 @@ export function LedgerModal({
               <input
                 type="text"
                 value={goal}
-                onChange={(e) => setGoal(e.target.value)}
+                onChange={(e) => changeGoal(e.target.value)}
                 placeholder="Input target goal, e.g. 1500000"
                 inputMode="decimal"
                 pattern="\d+(\.\d{1,2})?"
@@ -330,7 +365,7 @@ export function LedgerModal({
                     <input
                       type="email"
                       value={r.email}
-                      onChange={(e) => setRow(i, { email: e.target.value })}
+                      onChange={(e) => changeEmail(i, e.target.value)}
                       placeholder="Add recipient email"
                       className="lgr-input-field"
                     />
@@ -358,7 +393,7 @@ export function LedgerModal({
                 <button
                   type="button"
                   className="lgr-add-btn"
-                  onClick={() => setRows((prev) => [...prev, { email: "", share: "" }])}
+                  onClick={() => setRows((prev) => redistribute(goal, [...prev, { email: "", share: "" }]))}
                 >
                   <span className="lgr-add-plus">+</span>
                   <span>Add new recipient</span>
