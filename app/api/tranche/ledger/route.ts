@@ -23,7 +23,12 @@ export async function GET() {
       const active = activeRound(group, before);
       if (active) rounds.add(active.index);
       for (const round of rounds)
-        for (let page = 0; page < MAX_PAGES && (await syncEvents(round)); page++);
+        try {
+          for (let page = 0; page < MAX_PAGES && (await syncEvents(round)); page++);
+        } catch (error) {
+          // A round without a deployment yet has no events; keep showing the others.
+          if (!(error instanceof PaiflowError && error.api.code === "CONFIGURATION")) throw error;
+        }
     }
     const state = await readStore();
     const byTx = new Map<string, typeof state.events>();
