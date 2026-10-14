@@ -32,6 +32,8 @@ Done: everything under `lib/tranche/` and `app/api/tranche/`, multi-round `lib/p
 
 Waiting on the team (an agent cannot do these): team credentials, 9 Friendbot-funded testnet accounts, the R1 deployment (On Receive → Split: landlord 45%, member wallet 32%, vault 20%, fund 3%), `.env.local`, and the Vault/Fund multisig in Stellar Laboratory. Never ask for or accept S-secrets or tokens in chat.
 
+Keep the user informed: before each task, say in plain language what you will do and why. After it, say what changed and how you checked it. Ask clearly for anything you need from them, and report failures or skipped steps directly. Keep the deadlines in view. The full guidance is in `docs/HANDOFF-backend.md`.
+
 Agent tasks, in priority order:
 1. Fill `config/group.json` with the public G-addresses the team provides (5 members, Rent and Wallet destinations). Until then every member key is `null` and pay refuses.
 2. Connect the Pay screen (`components/starter-app.tsx`, currently calling `/api/pay`) to `POST /api/tranche/pay`: send `{round, from}`, sign the returned XDR in Freighter, send `{round, signedXdr}`, then poll `GET /api/tranche/pay/status` with backoff until SUCCESS. Reuse the starter's recovery and Web Locks in `lib/hooks/use-wallet-operation.ts`. Show the hash with a Stellar Expert link.
