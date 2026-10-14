@@ -47,7 +47,7 @@ function formatCardDate(iso: string): string {
 }
 
 function formatCardGoal(goal: string): string {
-  if (!goal || !goal.trim()) return "<<Monetary Goal>>";
+  if (!goal || !goal.trim()) return "";
   const num = parseFloat(goal.replace(/,/g, ""));
   if (isNaN(num)) return `₱ ${goal}`;
   return `₱ ${num.toLocaleString("en-US")}`;
@@ -83,7 +83,7 @@ export function Dashboard() {
   const handleCreatePaluwagan = (data: LedgerData) => {
     const newItem: PaluwaganItem = {
       id: "pal-" + Date.now(),
-      purpose: data.purpose.trim() || "<<Purpose Name>>",
+      purpose: data.purpose.trim(),
       goal: data.goal.trim(),
       start: data.start,
       deadline: data.deadline,
@@ -290,14 +290,14 @@ export function Dashboard() {
           )}
 
           {paluwagans.map((p) => {
-            const hasCustomPurpose = p.purpose && p.purpose !== "<<Purpose Name>>";
-            const displayTitle = hasCustomPurpose ? p.purpose : "<<Purpose Name>>";
+            // Cards saved before placeholders were removed may still hold "<<…>>" text.
+            const displayTitle = p.purpose?.startsWith("<<") ? "" : (p.purpose ?? "");
             const displayStart = p.start
-              ? `<< Started: ${formatCardDate(p.start)} >>`
-              : "<< Validation Started Date >>";
+              ? `Started: ${formatCardDate(p.start)}`
+              : "";
             const displayDeadline = p.deadline
-              ? `<< Deadline: ${formatCardDate(p.deadline)} >>`
-              : "<< Validating Deadline Date >>";
+              ? `Deadline: ${formatCardDate(p.deadline)}`
+              : "";
             const displayGoal = formatCardGoal(p.goal);
 
             return (
@@ -338,7 +338,7 @@ export function Dashboard() {
                       type="button"
                       className="db-card-btn"
                       onClick={() => setSelectedPaluwagan(p)}
-                      aria-label={`View ${displayTitle}`}
+                      aria-label={`View ${displayTitle || "paluwagan"}`}
                     >
                       <span className="db-card-btn-label">View</span>
                     </button>
@@ -392,7 +392,7 @@ export function Dashboard() {
                 </div>
                 <div>
                   <h2 className="db-detail-title">
-                    {selectedPaluwagan.purpose || "<<Purpose Name>>"}
+                    {selectedPaluwagan.purpose?.startsWith("<<") ? "" : selectedPaluwagan.purpose}
                   </h2>
                   <span className="db-detail-badge">Active Savings Plan</span>
                 </div>

@@ -614,10 +614,10 @@ export function LedgerModal({
 
               <div className="lgr-summary-right">
                 <strong className="lgr-summary-valid">
-                  {signature.trim() ? "Valid E-Signature" : "<<E-Sig Validation>>"}
+                  {signature.trim() ? "Valid E-Signature" : ""}
                 </strong>
                 <span className="lgr-summary-dates">
-                  Start: {start || "<<Start Date>>"} &nbsp; Till: {deadline || "<<deadline date>>"}
+                  {start && `Start: ${start}`}{start && deadline && "\u00a0\u00a0"}{deadline && `Till: ${deadline}`}
                 </span>
               </div>
             </div>
